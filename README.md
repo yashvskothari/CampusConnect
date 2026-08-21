@@ -2,8 +2,7 @@
 
 > A full-stack freelance marketplace MVP where students offer services, post jobs, bid on tasks, chat in real-time, and receive AI-powered recommendations.
 
-![CampusConnect Banner](docs/screenshots/banner.png)
-
+[![CampusConnect Banner](docs/screenshots/banner.png)](https://campus-connect-free.vercel.app/)
 ---
 
 ## Table of Contents
