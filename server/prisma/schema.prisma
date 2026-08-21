@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  FREELANCER
+  CLIENT
+  ADMIN
+}
+
+enum JobStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum BidStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(FREELANCER)
+  bio       String?
+  skills    String[] @default([])
+  avatar    String?
+  rating    Float    @default(0)
+  createdAt DateTime @default(now())
+
+  services         Service[]
+  jobs             Job[]              @relation("ClientJobs")
+  bids             Bid[]
+  sentMessages     Message[]
+  reviewsGiven     Review[]           @relation("ReviewsGiven")
+  reviewsReceived  Review[]           @relation("ReviewsReceived")
+  paymentsAsClient Payment[]          @relation("ClientPayments")
+  paymentsAsFreelancer Payment[]      @relation("FreelancerPayments")
+  conversations    ConversationParticipant[]
+}
+
+model Service {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  category     String
+  price        Float
+  freelancerId String
+  freelancer   User     @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+}
+
+model Job {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  budget      Float
+  deadline    DateTime
+  category    String
+  status      JobStatus @default(OPEN)
+  clientId    String
+  client      User      @relation("ClientJobs", fields: [clientId], references: [id], onDelete: Cascade)
+  bids        Bid[]
+  createdAt   DateTime  @default(now())
+}
+
+model Bid {
+  id           String    @id @default(cuid())
+  proposal     String
+  quote        Float
+  deliveryDays Int
+  status       BidStatus @default(PENDING)
+  jobId        String
+  job          Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  freelancerId String
+  freelancer   User      @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+
+  @@unique([jobId, freelancerId])
+}
+
+model Conversation {
+  id           String                    @id @default(cuid())
+  participants ConversationParticipant[]
+  messages     Message[]
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+}
+
+model ConversationParticipant {
+  id             String       @id @default(cuid())
+  conversationId String
+  userId         String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  text           String
+  fileUrl        String?
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  rating     Int
+  comment    String
+  reviewerId String
+  reviewer   User     @relation("ReviewsGiven", fields: [reviewerId], references: [id], onDelete: Cascade)
+  revieweeId String
+  reviewee   User     @relation("ReviewsReceived", fields: [revieweeId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([reviewerId, revieweeId])
+}
+
+model Payment {
+  id           String        @id @default(cuid())
+  amount       Float
+  commission   Float
+  status       PaymentStatus @default(PENDING)
+  clientId     String
+  client       User          @relation("ClientPayments", fields: [clientId], references: [id], onDelete: Cascade)
+  freelancerId String
+  freelancer   User          @relation("FreelancerPayments", fields: [freelancerId], references: [id], onDelete: Cascade)
+  jobId        String?
+  createdAt    DateTime      @default(now())
+}

@@ -1,0 +1,30 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+uploads/
+*.log
+.DS_Store
+Thumbs.db
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# Vite cache
+.vite/
+client/.vite/
+
+# Vercel CLI
+.vercel/
+
+# Prisma
+server/prisma/migrations/**/migration_lock.toml
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+client/dist/
+server/dist/

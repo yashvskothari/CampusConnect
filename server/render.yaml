@@ -1,0 +1,11 @@
+# CampusConnect Server - Render Deployment
+# Set these in Render Dashboard > Environment
+
+# DATABASE_URL=postgresql://... (from Neon)
+# JWT_SECRET=your-production-secret
+# JWT_EXPIRES=7d
+# PORT=5000
+# CLIENT_URL=https://your-app.vercel.app
+
+# Build Command: npm install && npx prisma generate && npm run build
+# Start Command: npx prisma migrate deploy && npm start
