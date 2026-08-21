@@ -455,7 +455,3 @@ Continue implementation by reading:
 ```
 
 ---
-
-## License
-
-MIT License
