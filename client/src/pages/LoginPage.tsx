@@ -60,9 +60,9 @@ export default function LoginPage() {
         </p>
         <div className="mt-4 p-3 bg-surface-50 rounded-lg text-xs text-surface-700">
           <p className="font-medium text-surface-800 mb-1">Demo accounts:</p>
-          <p>Freelancer: freelancer@campusconnect.com</p>
-          <p>Client: client@campusconnect.com</p>
-          <p>Password: password123</p>
+          <p>Freelancer: freelancer@campusconnection.com</p>
+          <p>Client: client@campusconnection.com</p>
+          <p>Password: password@123</p>
         </div>
       </Card>
     </div>
