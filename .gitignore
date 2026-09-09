@@ -30,4 +30,4 @@ client/dist/
 server/dist/
 
 
-.pdf
+*.pdf
