@@ -28,3 +28,6 @@ server/prisma/migrations/**/migration_lock.toml
 # Build
 client/dist/
 server/dist/
+
+
+.pdf
