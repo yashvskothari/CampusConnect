@@ -10,7 +10,7 @@ export default function Footer() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg brand-gradient font-bold text-white text-sm">
                 C
               </div>
-              <span className="text-lg font-bold text-surface-900">CampusConnect</span>
+              <span className="text-lg font-bold text-surface-900">GigVerse</span>
             </div>
             <p className="text-sm text-surface-700">Connect. Collaborate. Create. The AI-powered freelance marketplace built for students.</p>
           </div>
@@ -38,7 +38,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-surface-300 pt-8 text-center text-sm text-surface-700">
-          &copy; {new Date().getFullYear()} CampusConnect. Built for internship demonstration.
+          &copy; {new Date().getFullYear()} GigVerse. Built for internship demonstration.
         </div>
       </div>
     </footer>

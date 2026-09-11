@@ -59,7 +59,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-surface-900">Create your account</h1>
-          <p className="mt-2 text-sm text-surface-700">Join CampusConnect and start your journey</p>
+          <p className="mt-2 text-sm text-surface-700">Join GigVerse and start your journey</p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input label="Full Name" error={errors.name?.message} {...register('name')} />

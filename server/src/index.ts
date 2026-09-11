@@ -28,7 +28,7 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'CampusConnect API', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', service: 'GigVerse API', timestamp: new Date().toISOString() });
 });
 
 app.use('/api/auth', authRoutes);
@@ -49,7 +49,7 @@ const httpServer = http.createServer(app);
 setupSocket(httpServer);
 
 httpServer.listen(PORT, () => {
-  console.log(`CampusConnect server running on port ${PORT}`);
+  console.log(`GigVerse server running on port ${PORT}`);
 });
 
 export default app;

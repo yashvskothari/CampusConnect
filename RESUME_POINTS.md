@@ -1,7 +1,7 @@
 # CampusConnect - Resume Points
 
 ## Project Summary
-CampusConnect is a full-stack student freelance marketplace MVP inspired by Fiverr and Upwork. Built with React, Node.js, PostgreSQL, and Socket.io, it enables students to offer services, bid on jobs, chat in real-time, and receive AI-powered job recommendations.
+GigVerse is a full-stack student freelance marketplace MVP inspired by Fiverr and Upwork. Built with React, Node.js, PostgreSQL, and Socket.io, it enables students to offer services, bid on jobs, chat in real-time, and receive AI-powered job recommendations.
 
 ## Architecture Decisions
 - **Monolithic REST API** over microservices for rapid MVP delivery within 1-day scope

@@ -1,7 +1,7 @@
-# CampusConnect - Product Requirements Document (PRD)
+# GigVerse - Product Requirements Document (PRD)
 
 ## Overview
-CampusConnect is a freelance marketplace designed specifically for students, connecting talented student freelancers with clients who need affordable, quality work.
+GigVerse is a freelance marketplace designed specifically for students, connecting talented student freelancers with clients who need affordable, quality work.
 
 ## Target Users
 - **Freelancers (Students):** Offer services, bid on jobs, build portfolio

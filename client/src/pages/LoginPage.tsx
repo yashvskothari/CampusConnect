@@ -48,7 +48,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-surface-900">Welcome back</h1>
-          <p className="mt-2 text-sm text-surface-700">Sign in to your CampusConnect account</p>
+          <p className="mt-2 text-sm text-surface-700">Sign in to your Gigverse account</p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input label="Email" type="email" error={errors.email?.message} {...register('email')} />
