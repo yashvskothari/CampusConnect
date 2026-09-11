@@ -10,8 +10,10 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const handleLogout = () => {
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
     logout();
     navigate("/");
   };
@@ -19,6 +21,7 @@ export default function Navbar() {
   const navLinks = [
     { to: "/jobs", label: "Browse Jobs" },
     { to: "/services", label: "Browse Services" },
+    { to: "/about", label: "About Us" },
   ];
 
   return (
@@ -53,12 +56,6 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              to="/services"
-              className="text-sm font-medium text-surface-800 hover:text-white transition-colors"
-            >
-              About Us
-            </Link>
           </div>
 
           <div className="hidden md:flex items-center gap-3">
@@ -80,7 +77,7 @@ export default function Navbar() {
                   </span>
                 </Link>
                 <button
-                  onClick={handleLogout}
+                  onClick={() => setShowLogoutConfirm(true)}
                   className="p-2 text-surface-700 hover:text-red-400 rounded-lg hover:bg-surface-200"
                 >
                   <LogOut className="h-5 w-5" />
@@ -142,7 +139,10 @@ export default function Navbar() {
                   Dashboard
                 </Link>
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    setMobileOpen(false);
+                    setShowLogoutConfirm(true);
+                  }}
                   className="block px-3 py-2 text-sm text-red-400"
                 >
                   Logout
@@ -169,6 +169,37 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      {showLogoutConfirm && (
+        <div
+          className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 px-4 mt-20"
+          onClick={() => setShowLogoutConfirm(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-xl bg-surface-0 backdrop-blur-md p-6 shadow-xl mt-20 border border-white/20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-surface-900">Log out?</h3>
+            <p className="mt-2 text-sm text-surface-700">
+              Are you sure you want to log out of your account?
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-surface-800 hover:bg-surface-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

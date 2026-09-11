@@ -1,59 +1,160 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary = magenta/pink side of the brand gradient */
-  --color-primary-50: #fdf2fb;
-  --color-primary-100: #fbe6f7;
-  --color-primary-200: #f6c7ee;
-  --color-primary-300: #ef9ade;
-  --color-primary-400: #e563c8;
-  --color-primary-500: #d13cae;
-  --color-primary-600: #b8258f;
-  --color-primary-700: #9c1d76;
-  --color-primary-800: #7f1c62;
-  --color-primary-900: #6a1c54;
+  /* Primary — warm amber, used sparingly */
+  --color-primary-50: #fffaf0;
+  --color-primary-100: #fef3c7;
+  --color-primary-200: #fde68a;
+  --color-primary-300: #fcd34d;
+  --color-primary-400: #fbbf24;
+  --color-primary-500: #d99a1e;
+  --color-primary-600: #b7791f;
+  --color-primary-700: #975a16;
+  --color-primary-800: #783f0d;
+  --color-primary-900: #5f320c;
 
-  /* Accent = purple side of the brand gradient */
-  --color-accent-50: #f4f1fe;
-  --color-accent-100: #e9e2fd;
-  --color-accent-200: #d1c1fb;
-  --color-accent-300: #b394f7;
-  --color-accent-400: #9761ee;
-  --color-accent-500: #8438e0;
-  --color-accent-600: #7126c4;
-  --color-accent-700: #5e1fa2;
-  --color-accent-800: #4d1c83;
-  --color-accent-900: #401b6b;
+  /* Accent — neutral, not another strong color */
+  --color-accent-50: #fafaf9;
+  --color-accent-100: #f5f5f4;
+  --color-accent-200: #e7e5e4;
+  --color-accent-300: #d6d3d1;
+  --color-accent-400: #a8a29e;
+  --color-accent-500: #78716c;
+  --color-accent-600: #57534e;
+  --color-accent-700: #44403c;
+  --color-accent-800: #292524;
+  --color-accent-900: #1c1917;
 
-  /* Dark neutrals for backgrounds / cards / borders */
-  --color-surface-0: #0a0a0f;
-  --color-surface-50: #0e0e15;
-  --color-surface-100: #13131c;
-  --color-surface-200: #191927;
-  --color-surface-300: #22222f;
-  --color-surface-400: #2b2b3a;
-  --color-surface-500: #38384a;
-  --color-surface-600: #55556b;
-  --color-surface-700: #7a7a94;
-  --color-surface-800: #a6a6ba;
-  --color-surface-900: #e4e4ec;
+  /* Neutral dark surfaces */
+  --color-surface-0: #11110f;
+  --color-surface-50: #161614;
+  --color-surface-100: #1b1b18;
+  --color-surface-200: #22221f;
+  --color-surface-300: #2b2b27;
+  --color-surface-400: #373732;
+  --color-surface-500: #484842;
+  --color-surface-600: #62625b;
+  --color-surface-700: #85857d;
+  --color-surface-800: #b2b2aa;
+  --color-surface-900: #eeeeea;
+}
+
+
+/* ─────────────────────────────────────
+   Base
+───────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  @apply bg-surface-0 text-surface-900 antialiased;
+  margin: 0;
+  background: #11110f;
+  color: #eeeeea;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+
+/* ─────────────────────────────────────
+   Selection
+───────────────────────────────────── */
 
 ::selection {
-  @apply bg-primary-500/40 text-white;
+  background: rgba(217, 154, 30, 0.22);
+  color: #ffffff;
 }
 
+
+/* ─────────────────────────────────────
+   Brand
+───────────────────────────────────── */
+
+/*
+  No gradient.
+  Use this only for important brand elements.
+*/
+
 .brand-gradient {
-  background-image: linear-gradient(90deg, #ec4899, #a855f7);
+  background: #d99a1e;
 }
 
 .brand-gradient-text {
-  background-image: linear-gradient(90deg, #f472b6, #c084fc);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #e0aa3e;
+}
+
+
+/* ─────────────────────────────────────
+   Scrollbar
+───────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #11110f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #373732;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #484842;
+}
+
+
+/* ─────────────────────────────────────
+   Forms
+───────────────────────────────────── */
+
+input,
+textarea,
+select {
+  outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #62625b;
+}
+
+
+/* ─────────────────────────────────────
+   Focus
+───────────────────────────────────── */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(217, 154, 30, 0.55);
+  outline-offset: 2px;
+}
+
+
+/* ─────────────────────────────────────
+   Subtle borders
+───────────────────────────────────── */
+
+.soft-border {
+  border: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+.soft-divider {
+  border-color: rgba(255, 255, 255, 0.075);
 }

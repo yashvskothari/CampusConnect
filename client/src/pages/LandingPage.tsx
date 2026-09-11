@@ -323,37 +323,222 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 brand-gradient">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <Zap className="h-12 w-12 text-white/80 mx-auto mb-4" />
-          <h2 className="text-3xl font-bold text-white">
-            Ready to Start Your Journey?
-          </h2>
-          <p className="mt-3 text-white/80 max-w-xl mx-auto">
-            Join thousands of students earning while learning. It takes less
-            than 2 minutes to sign up.
-          </p>
-          <div className="mt-8 flex justify-center gap-4">
-            <Link to="/signup">
-              <Button
-                size="lg"
-                className="bg-surface-100 text-primary-700 hover:bg-surface-100/90"
-              >
-                Sign Up as Freelancer
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white/40 text-white hover:bg-surface-100/10"
-              >
-                Hire a Student
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+<section
+  className="
+    relative isolate overflow-hidden
+    border-white/6
+    bg-[#0f0f0d]
+    py-20 sm:py-24 lg:py-28
+  "
+>
+  {/* ================= BACKGROUND ================= */}
+
+  {/* Top-left amber glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -left-32 -top-32
+      h-80 w-80
+      rounded-full
+      bg-primary-500/25
+      blur-[100px]
+      sm:h-112 sm:w-md
+    "
+  />
+
+  {/* Top-right amber glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -right-40 -top-24
+      h-96 w-96
+      rounded-full
+      bg-primary-600/20
+      blur-[120px]
+      sm:h-128 sm:w-lg
+    "
+  />
+
+  {/* Bottom-left glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -bottom-40 -left-20
+      h-80 w-80
+      rounded-full
+      bg-primary-500/20
+      blur-[110px]
+      sm:h-120 sm:w-120
+    "
+  />
+
+  {/* Bottom-right glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -bottom-40 -right-20
+      h-96 w-96
+      rounded-full
+      bg-primary-700/25
+      blur-[120px]
+      sm:h-128 sm:w-lg
+    "
+  />
+
+  {/* Large diagonal amber light */}
+  <div
+    className="
+      pointer-events-none absolute
+      left-[-15%] top-[42%]
+      h-24 w-[65%]
+      rotate-[-18deg]
+      rounded-full
+      bg-primary-500/10
+      blur-[55px]
+      sm:h-32
+    "
+  />
+
+  {/* Opposite diagonal light */}
+  <div
+    className="
+      pointer-events-none absolute
+      right-[-15%] top-[28%]
+      h-24 w-[60%]
+      rotate-18
+      rounded-full
+      bg-primary-500/10
+      blur-[60px]
+      sm:h-32
+    "
+  />
+
+  {/* Dark center vignette — keeps text readable */}
+  <div
+    className="
+      pointer-events-none absolute inset-0
+      bg-[radial-gradient(ellipse_at_center,rgba(15,15,13,0.15)_0%,rgba(15,15,13,0.35)_45%,rgba(15,15,13,0.82)_100%)]
+    "
+  />
+
+  {/* Very subtle top-to-bottom depth */}
+  <div
+    className="
+      pointer-events-none absolute inset-0
+      bg-[linear-gradient(180deg,rgba(255,255,255,0.025),transparent_35%,rgba(0,0,0,0.18))]
+    "
+  />
+
+  {/* ================= CONTENT ================= */}
+
+  <div
+    className="
+      relative z-10
+      mx-auto max-w-7xl
+      px-4 text-center
+      sm:px-6
+      lg:px-8
+    "
+  >
+    {/* Icon */}
+    <div
+      className="
+        mx-auto mb-5
+        flex h-12 w-12
+        items-center justify-center
+        rounded-xl
+        border border-primary-500/20
+        bg-primary-500/10
+      "
+    >
+      <Zap
+        className="
+          h-6 w-6
+          text-primary-400
+          sm:h-7 sm:w-7
+        "
+      />
+    </div>
+
+    {/* Heading */}
+    <h2
+      className="
+        text-2xl font-bold tracking-tight
+        text-[#f3f3ed]
+        sm:text-3xl
+        lg:text-4xl
+      "
+    >
+      Ready to Start Your Journey?
+    </h2>
+
+    {/* Description */}
+    <p
+      className="
+        mx-auto mt-4
+        max-w-xl
+        text-sm leading-6
+        text-[#aaa9a0]
+        sm:text-base sm:leading-7
+      "
+    >
+      Join thousands of students earning while learning. It takes less
+      than 2 minutes to sign up.
+    </p>
+
+    {/* Buttons */}
+    <div
+      className="
+        mx-auto mt-8
+        flex w-full max-w-md
+        flex-col gap-3
+        sm:max-w-none
+        sm:flex-row sm:justify-center sm:gap-4
+      "
+    >
+      {/* Primary */}
+      <Link to="/signup" className="w-full sm:w-auto">
+        <Button
+          size="lg"
+          className="
+            w-full
+            border border-primary-400
+            bg-primary-500
+            text-[#171713]
+            shadow-[0_4px_20px_rgba(217,154,30,0.18)]
+            transition-all duration-200
+            hover:bg-primary-400
+            hover:shadow-[0_6px_25px_rgba(217,154,30,0.25)]
+            sm:w-auto
+          "
+        >
+          Sign Up as Freelancer
+        </Button>
+      </Link>
+
+      {/* Secondary */}
+      <Link to="/signup" className="w-full sm:w-auto">
+        <Button
+          size="lg"
+          variant="outline"
+          className="
+            w-full
+            border-[#55554d]
+            bg-white/2
+            text-surface-900
+            backdrop-blur-sm
+            transition-all duration-200
+            hover:border-[#77776d]
+            hover:bg-white/6
+            sm:w-auto
+          "
+        >
+          Hire a Student
+        </Button>
+      </Link>
+    </div>
+  </div>
+</section>
     </div>
   );
 }
