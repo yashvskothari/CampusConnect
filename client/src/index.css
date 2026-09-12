@@ -1,42 +1,42 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary — warm amber, used sparingly */
-  --color-primary-50: #fffaf0;
-  --color-primary-100: #fef3c7;
-  --color-primary-200: #fde68a;
-  --color-primary-300: #fcd34d;
-  --color-primary-400: #fbbf24;
-  --color-primary-500: #d99a1e;
-  --color-primary-600: #b7791f;
-  --color-primary-700: #975a16;
-  --color-primary-800: #783f0d;
-  --color-primary-900: #5f320c;
+  /* Primary — deep emerald green, used sparingly */
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #16a34a;
+  --color-primary-700: #15803d;
+  --color-primary-800: #166534;
+  --color-primary-900: #14532d;
 
-  /* Accent — neutral, not another strong color */
-  --color-accent-50: #fafaf9;
-  --color-accent-100: #f5f5f4;
-  --color-accent-200: #e7e5e4;
-  --color-accent-300: #d6d3d1;
-  --color-accent-400: #a8a29e;
-  --color-accent-500: #78716c;
-  --color-accent-600: #57534e;
-  --color-accent-700: #44403c;
-  --color-accent-800: #292524;
-  --color-accent-900: #1c1917;
+  /* Accent — muted green/stone neutral */
+  --color-accent-50: #f7faf7;
+  --color-accent-100: #eef4ef;
+  --color-accent-200: #dce8df;
+  --color-accent-300: #c7d7cb;
+  --color-accent-400: #9aaa9d;
+  --color-accent-500: #6b7f70;
+  --color-accent-600: #526156;
+  --color-accent-700: #3f4b42;
+  --color-accent-800: #273029;
+  --color-accent-900: #161c17;
 
-  /* Neutral dark surfaces */
-  --color-surface-0: #11110f;
-  --color-surface-50: #161614;
-  --color-surface-100: #1b1b18;
-  --color-surface-200: #22221f;
-  --color-surface-300: #2b2b27;
-  --color-surface-400: #373732;
-  --color-surface-500: #484842;
-  --color-surface-600: #62625b;
-  --color-surface-700: #85857d;
-  --color-surface-800: #b2b2aa;
-  --color-surface-900: #eeeeea;
+  /* Dark green-charcoal surfaces */
+  --color-surface-0: #0c120e;
+  --color-surface-50: #101812;
+  --color-surface-100: #151f18;
+  --color-surface-200: #1b271e;
+  --color-surface-300: #243229;
+  --color-surface-400: #304136;
+  --color-surface-500: #405345;
+  --color-surface-600: #5d7162;
+  --color-surface-700: #819185;
+  --color-surface-800: #b4c0b6;
+  --color-surface-900: #edf4ee;
 }
 
 
@@ -50,8 +50,8 @@ html {
 
 body {
   margin: 0;
-  background: #11110f;
-  color: #eeeeea;
+  background: #0c120e;
+  color: #edf4ee;
 
   font-family:
     Inter,
@@ -72,7 +72,7 @@ body {
 ───────────────────────────────────── */
 
 ::selection {
-  background: rgba(217, 154, 30, 0.22);
+  background: rgba(34, 197, 94, 0.20);
   color: #ffffff;
 }
 
@@ -87,11 +87,11 @@ body {
 */
 
 .brand-gradient {
-  background: #d99a1e;
+  background: #22c55e;
 }
 
 .brand-gradient-text {
-  color: #e0aa3e;
+  color: #5ee486;
 }
 
 
@@ -104,16 +104,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #11110f;
+  background: #0c120e;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #373732;
+  background: #304136;
   border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #484842;
+  background: #405345;
 }
 
 
@@ -129,7 +129,7 @@ select {
 
 input::placeholder,
 textarea::placeholder {
-  color: #62625b;
+  color: #5d7162;
 }
 
 
@@ -142,7 +142,7 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid rgba(217, 154, 30, 0.55);
+  outline: 2px solid rgba(34, 197, 94, 0.55);
   outline-offset: 2px;
 }
 
