@@ -2,7 +2,7 @@
 
 > A full-stack freelance marketplace MVP where students offer services, post jobs, bid on tasks, chat in real-time, and receive AI-powered recommendations.
 
-[![CampusConnect Banner](docs/screenshots/banner.png)](https://campus-connect-free.vercel.app/)
+[![Gigverse Banner](docs/screenshots/banner.png)](https://campus-connect-free.vercel.app/)
 ---
 
 ## Table of Contents
@@ -26,7 +26,7 @@
 
 ## Project Overview
 
-CampusConnect is a freelance marketplace inspired by Fiverr, Freelancer.com, and Upwork — simplified and tailored for students. It demonstrates full-stack development including authentication, role-based access, CRUD operations, real-time features, clean UI/UX, database modeling, and production deployment.
+Gigverse is a freelance marketplace inspired by Fiverr, Freelancer.com, and Upwork — simplified and tailored for students. It demonstrates full-stack development including authentication, role-based access, CRUD operations, real-time features, clean UI/UX, database modeling, and production deployment.
 
 **Live Demo:** Deploy to Vercel + Render (see [Deployment](#deployment-instructions))
 
@@ -249,7 +249,7 @@ cp client/.env.example client/.env
 
 | Variable       | Example                              | Description                       |
 | -------------- | ------------------------------------ | --------------------------------- |
-| `DATABASE_URL` | `postgresql://user:pass@host/campusconnect` | Neon PostgreSQL connection string |
+| `DATABASE_URL` | `postgresql://user:pass@host/gigverse` | Neon PostgreSQL connection string |
 | `JWT_SECRET`   | `your-secret-key-here`               | JWT signing secret                |
 | `JWT_EXPIRES`  | `7d`                                 | Token expiration                  |
 | `PORT`         | `5000`                               | Server port                       |
@@ -425,7 +425,7 @@ curl -X POST https://your-render-app.onrender.com/api/auth/login \
 
 ## Internship Learnings
 
-Building CampusConnect taught key full-stack engineering skills:
+Building Gigverse taught key full-stack engineering skills:
 
 1. **System Design** – Designing a normalized database schema with proper relationships, enums, and constraints before writing code
 2. **API Design** – RESTful endpoint design with consistent patterns, error handling, and role-based authorization

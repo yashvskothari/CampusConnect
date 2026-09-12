@@ -1,4 +1,4 @@
-# CampusConnect - Development Plan
+# Gigverse - Development Plan
 
 ## Timeline: 1-Day MVP
 

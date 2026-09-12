@@ -19,7 +19,7 @@ export default function FreelancerRecommendationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2"><Sparkles className="h-6 w-6 text-purple-600" /> AI Job Matchmaker</h1>
+        <h1 className="text-2xl font-bold flex items-center gap-2"><Sparkles className="h-6 w-6 text-primary-400" /> AI Job Matchmaker</h1>
         <p className="text-surface-700">Jobs ranked by compatibility: 40% skills + 30% category + 20% rating + 10% experience</p>
       </div>
 
@@ -34,7 +34,7 @@ export default function FreelancerRecommendationsPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg font-bold text-purple-600">{job.matchScore}%</span>
+                    <span className="text-lg font-bold text-teal-400">{job.matchScore}%</span>
                     <span className="text-xs text-surface-700">compatibility</span>
                   </div>
                   <h3 className="font-semibold text-lg">{job.title}</h3>

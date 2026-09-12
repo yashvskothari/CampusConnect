@@ -1,8 +1,8 @@
 {
-  "name": "campusconnect",
+  "name": "gigverse",
   "version": "1.0.0",
   "private": true,
-  "description": "CampusConnect - Student Freelance Marketplace MVP",
+  "description": "Gigverse - Student Freelance Marketplace MVP",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "cd server && npm run dev",

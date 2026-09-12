@@ -6,6 +6,10 @@ export const authApi = {
     api.post<{ user: User; token: string }>('/auth/signup', data),
   login: (data: { email: string; password: string }) =>
     api.post<{ user: User; token: string }>('/auth/login', data),
+  forgotPassword: (data: { email: string }) =>
+    api.post<{ message: string }>('/auth/forgot-password', data),
+  resetPassword: (data: { token: string; password: string }) =>
+    api.post<{ message: string }>('/auth/reset-password', data),
   me: () => api.get<User>('/auth/me'),
   logout: () => api.post('/auth/logout'),
 };

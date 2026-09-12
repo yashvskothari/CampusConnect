@@ -49,7 +49,7 @@ export default function LandingPage() {
                 Creating <span className="brand-gradient-text">Opportunities.</span>
               </h1>
               <p className="mt-6 text-lg text-surface-700 max-w-xl">
-                CampusConnect AI is a student-first freelance marketplace to find talent, get work done, and build your reputation.
+                Gigverse AI is a student-first freelance marketplace to find talent, get work done, and build your reputation.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link to="/jobs"><Button size="lg">
@@ -127,7 +127,7 @@ export default function LandingPage() {
       <section className="py-20 bg-surface-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-surface-900">Why CampusConnect?</h2>
+            <h2 className="text-3xl font-bold text-surface-900">Why Gigverse?</h2>
             <p className="mt-3 text-surface-700 max-w-2xl mx-auto">Everything you need to freelance as a student or hire student talent.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,6 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'campusconnect-dev-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'gigverse-dev-secret-change-in-production';
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '7d';
 
 export interface JwtPayload {

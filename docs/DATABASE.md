@@ -1,4 +1,4 @@
-# CampusConnect - Database Design
+# Gigverse - Database Design
 
 ## ER Diagram
 

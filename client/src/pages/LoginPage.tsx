@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,6 +24,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
 
+  useEffect(() => {
+    if ((location.state as { resetSuccess?: boolean })?.resetSuccess) {
+      toast.success('Password reset successfully. You can now log in with your new password.');
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
+
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
@@ -48,11 +55,14 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-surface-900">Welcome back</h1>
-          <p className="mt-2 text-sm text-surface-700">Sign in to your CampusConnect account</p>
+          <p className="mt-2 text-sm text-surface-700">Sign in to your Gigverse account</p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input label="Email" type="email" error={errors.email?.message} {...register('email')} />
           <Input label="Password" type="password" error={errors.password?.message} {...register('password')} />
+          <div className="text-right">
+            <Link to="/forgot-password" className="text-sm font-medium text-primary-400 hover:text-primary-300">Forgot Password?</Link>
+          </div>
           <Button type="submit" className="w-full" loading={loading}>Sign In</Button>
         </form>
         <p className="mt-6 text-center text-sm text-surface-700">

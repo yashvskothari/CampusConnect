@@ -135,11 +135,11 @@ export default function JobDetailPage() {
             <Card>
               <h2 className="text-lg font-semibold mb-4">Submit Your Bid</h2>
               {suggestion && (
-                <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-100">
-                  <div className="flex items-center gap-2 text-purple-700 text-sm font-medium mb-2">
+                <div className="mb-4 rounded-lg border border-teal-100 bg-teal-50 p-3">
+                  <div className="mb-2 flex items-center gap-2 text-sm font-medium text-teal-700">
                     <Sparkles className="h-4 w-4" /> AI Bid Assistant
                   </div>
-                  <p className="text-xs text-purple-600">Suggested: {formatCurrency(suggestion.suggestedQuote)} in {suggestion.suggestedDeliveryDays} days</p>
+                  <p className="text-xs text-teal-600">Suggested: {formatCurrency(suggestion.suggestedQuote)} in {suggestion.suggestedDeliveryDays} days</p>
                 </div>
               )}
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

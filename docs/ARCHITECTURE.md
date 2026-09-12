@@ -1,4 +1,4 @@
-# CampusConnect - Architecture
+# Gigverse - Architecture
 
 ## System Architecture
 

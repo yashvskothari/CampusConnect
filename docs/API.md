@@ -1,4 +1,4 @@
-# CampusConnect - API Documentation
+# Gigverse - API Documentation
 
 Base URL: `http://localhost:5000/api` (development)
 
