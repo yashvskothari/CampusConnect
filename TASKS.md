@@ -1,4 +1,4 @@
-# CampusConnect MVP - Task Checklist
+# GigVerse MVP - Task Checklist
 
 ## Planning & Setup
 - [x] Project folder structure (client, server, docs)

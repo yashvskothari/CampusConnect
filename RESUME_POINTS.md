@@ -1,4 +1,4 @@
-# CampusConnect - Resume Points
+# GigVerse - Resume Points
 
 ## Project Summary
 GigVerse is a full-stack student freelance marketplace MVP inspired by Fiverr and Upwork. Built with React, Node.js, PostgreSQL, and Socket.io, it enables students to offer services, bid on jobs, chat in real-time, and receive AI-powered job recommendations.

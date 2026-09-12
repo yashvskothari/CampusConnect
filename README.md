@@ -2,7 +2,7 @@
 
 > A full-stack freelance marketplace MVP where students offer services, post jobs, bid on tasks, chat in real-time, and receive AI-powered recommendations.
 
-[![CampusConnect Banner](docs/screenshots/banner.png)](https://campus-connect-free.vercel.app/)
+[![CampusConnect Banner](docs/screenshots/banner.png)](https://gig-verse-free.vercel.app/)
 ---
 
 ## Table of Contents
@@ -123,7 +123,7 @@ flowchart TD
 ## Folder Structure
 
 ```
-campusconnect/
+GigVerse/
 ├── client/                     # React frontend (Vite)
 │   ├── src/
 │   │   ├── components/         # Button, Card, Navbar, Avatar, etc.
@@ -425,7 +425,7 @@ curl -X POST https://your-render-app.onrender.com/api/auth/login \
 
 ## Internship Learnings
 
-Building CampusConnect taught key full-stack engineering skills:
+Building GigVerse taught key full-stack engineering skills:
 
 1. **System Design** – Designing a normalized database schema with proper relationships, enums, and constraints before writing code
 2. **API Design** – RESTful endpoint design with consistent patterns, error handling, and role-based authorization

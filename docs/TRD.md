@@ -1,4 +1,4 @@
-# CampusConnect - Technical Requirements Document (TRD)
+# GigVerse - Technical Requirements Document (TRD)
 
 ## Tech Stack
 

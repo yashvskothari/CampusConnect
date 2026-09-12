@@ -1,4 +1,4 @@
-# CampusConnect - Architecture
+# GigVerse - Architecture
 
 ## System Architecture
 
@@ -34,7 +34,7 @@ flowchart TD
 ## Folder Structure
 
 ```
-campusconnect/
+GigVerse/
 ├── client/                 # React frontend
 │   ├── src/
 │   │   ├── components/     # Reusable UI components
