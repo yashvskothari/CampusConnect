@@ -26,7 +26,7 @@
 
 ## Project Overview
 
-CampusConnect is a freelance marketplace inspired by Fiverr, Freelancer.com, and Upwork — simplified and tailored for students. It demonstrates full-stack development including authentication, role-based access, CRUD operations, real-time features, clean UI/UX, database modeling, and production deployment.
+GigVerse is a freelance marketplace inspired by Fiverr, Freelancer.com, and Upwork — simplified and tailored for students. It demonstrates full-stack development including authentication, role-based access, CRUD operations, real-time features, clean UI/UX, database modeling, and production deployment.
 
 **Live Demo:** Deploy to Vercel + Render (see [Deployment](#deployment-instructions))
 

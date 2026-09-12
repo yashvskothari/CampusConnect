@@ -1,38 +1,84 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import {
-  ArrowRight, Search, MessageSquare, Sparkles, Shield, Zap,
-  Code2, PenTool, FileText, GraduationCap, Megaphone, MoreHorizontal,
-  Briefcase, Users, Star, ShieldCheck,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import Button from '../components/Button';
-import Card from '../components/Card';
-import Rating from '../components/Rating';
-import { serviceApi } from '../services';
-import { formatCurrency } from '../utils';
-import type { Service } from '../types';
+  ArrowRight,
+  Search,
+  MessageSquare,
+  Sparkles,
+  Shield,
+  Zap,
+  Code2,
+  PenTool,
+  FileText,
+  GraduationCap,
+  Megaphone,
+  MoreHorizontal,
+  Briefcase,
+  Users,
+  Star,
+  ShieldCheck,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import Button from "../components/Button";
+import Card from "../components/Card";
+import Rating from "../components/Rating";
+import { serviceApi } from "../services";
+import { formatCurrency } from "../utils";
+import type { Service } from "../types";
 
 const categories = [
-  { icon: Code2, label: 'Development', count: '120+ jobs', color: 'text-primary-400 bg-primary-500/10' },
-  { icon: PenTool, label: 'Design & Creative', count: '96+ jobs', color: 'text-pink-400 bg-pink-500/10' },
-  { icon: FileText, label: 'Writing & Translation', count: '80+ jobs', color: 'text-amber-400 bg-amber-500/10' },
-  { icon: GraduationCap, label: 'Academic Help', count: '60+ jobs', color: 'text-emerald-400 bg-emerald-500/10' },
-  { icon: Megaphone, label: 'Marketing', count: '45+ jobs', color: 'text-violet-400 bg-violet-500/10' },
-  { icon: MoreHorizontal, label: 'More Categories', count: 'Explore all', color: 'text-surface-700 bg-surface-300' },
+  {
+    icon: Code2,
+    label: "Development",
+    count: "120+ jobs",
+    color: "text-primary-400 bg-primary-500/10",
+  },
+  {
+    icon: PenTool,
+    label: "Design & Creative",
+    count: "96+ jobs",
+    color: "text-pink-400 bg-pink-500/10",
+  },
+  {
+    icon: FileText,
+    label: "Writing & Translation",
+    count: "80+ jobs",
+    color: "text-amber-400 bg-amber-500/10",
+  },
+  {
+    icon: GraduationCap,
+    label: "Academic Help",
+    count: "60+ jobs",
+    color: "text-emerald-400 bg-emerald-500/10",
+  },
+  {
+    icon: Megaphone,
+    label: "Marketing",
+    count: "45+ jobs",
+    color: "text-violet-400 bg-violet-500/10",
+  },
+  {
+    icon: MoreHorizontal,
+    label: "More Categories",
+    count: "Explore all",
+    color: "text-surface-700 bg-surface-300",
+  },
 ];
 
 const stats = [
-  { icon: Briefcase, value: '1.2K+', label: 'Jobs Posted' },
-  { icon: Users, value: '850+', label: 'Freelancers' },
-  { icon: Star, value: '4.8', label: 'Average Rating' },
-  { icon: ShieldCheck, value: '100%', label: 'Secure Payments' },
+  { icon: Briefcase, value: "1.2K+", label: "Jobs Posted" },
+  { icon: Users, value: "850+", label: "Freelancers" },
+  { icon: Star, value: "4.8", label: "Average Rating" },
+  { icon: ShieldCheck, value: "100%", label: "Secure Payments" },
 ];
 
 export default function LandingPage() {
   const [featured, setFeatured] = useState<Service[]>([]);
 
   useEffect(() => {
-    serviceApi.getAll().then(({ data }) => setFeatured(data.slice(0, 3))).catch(() => {});
+    serviceApi
+      .getAll()
+      .then(({ data }) => setFeatured(data.slice(0, 3)))
+      .catch(() => {});
   }, []);
 
   return (
@@ -45,19 +91,24 @@ export default function LandingPage() {
           <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
             <div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                Connecting Students.<br />
-                Creating <span className="brand-gradient-text">Opportunities.</span>
+                Connecting Students.
+                <br />
+                Creating{" "}
+                <span className="brand-gradient-text">Opportunities.</span>
               </h1>
               <p className="mt-6 text-lg text-surface-700 max-w-xl">
-                CampusConnect AI is a student-first freelance marketplace to find talent, get work done, and build your reputation.
+                GigVerse AI is a student-first freelance marketplace to find
+                talent, get work done, and build your reputation.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <Link to="/jobs"><Button size="lg">
-                  Find Jobs
-                </Button></Link>
-                <Link to="/services"><Button size="lg" variant="outline">
-                  Offer Services
-                </Button></Link>
+                <Link to="/jobs">
+                  <Button size="lg">Find Jobs</Button>
+                </Link>
+                <Link to="/services">
+                  <Button size="lg" variant="outline">
+                    Offer Services
+                  </Button>
+                </Link>
               </div>
             </div>
 
@@ -65,10 +116,15 @@ export default function LandingPage() {
               <span className="inline-flex items-center gap-1 text-xs font-medium text-primary-400 mb-3">
                 <Sparkles className="h-3.5 w-3.5" /> AI Matchmaker
               </span>
-              <h3 className="text-xl font-bold text-surface-900">Smart matches.</h3>
-              <h3 className="text-xl font-bold brand-gradient-text mb-3">Better opportunities.</h3>
+              <h3 className="text-xl font-bold text-surface-900">
+                Smart matches.
+              </h3>
+              <h3 className="text-xl font-bold brand-gradient-text mb-3">
+                Better opportunities.
+              </h3>
               <p className="text-sm text-surface-700">
-                Our AI recommends the right jobs and freelancers based on skills, preferences and performance.
+                Our AI recommends the right jobs and freelancers based on
+                skills, preferences and performance.
               </p>
               <div className="pointer-events-none absolute -bottom-6 -right-6 h-28 w-28 rounded-2xl brand-gradient opacity-20 rotate-12" />
             </Card>
@@ -88,7 +144,9 @@ export default function LandingPage() {
 
           {/* Categories */}
           <div className="mt-14">
-            <h2 className="text-lg font-semibold text-surface-900 mb-4">Explore Top Categories</h2>
+            <h2 className="text-lg font-semibold text-surface-900 mb-4">
+              Explore Top Categories
+            </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
               {categories.map(({ icon: Icon, label, count, color }) => (
                 <Link
@@ -96,10 +154,14 @@ export default function LandingPage() {
                   to="/jobs"
                   className="rounded-xl border border-surface-300 bg-surface-100 p-4 hover:border-primary-500/50 transition-colors"
                 >
-                  <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${color} mb-6`}>
+                  <div
+                    className={`flex h-9 w-9 items-center justify-center rounded-lg ${color} mb-6`}
+                  >
                     <Icon className="h-4.5 w-4.5" />
                   </div>
-                  <p className="text-sm font-semibold text-surface-900">{label}</p>
+                  <p className="text-sm font-semibold text-surface-900">
+                    {label}
+                  </p>
                   <p className="text-xs text-surface-700">{count}</p>
                 </Link>
               ))}
@@ -127,15 +189,36 @@ export default function LandingPage() {
       <section className="py-20 bg-surface-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-surface-900">Why CampusConnect?</h2>
-            <p className="mt-3 text-surface-700 max-w-2xl mx-auto">Everything you need to freelance as a student or hire student talent.</p>
+            <h2 className="text-3xl font-bold text-surface-900">
+              Why GigVerse?
+            </h2>
+            <p className="mt-3 text-surface-700 max-w-2xl mx-auto">
+              Everything you need to freelance as a student or hire student
+              talent.
+            </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Search, title: 'Smart Discovery', desc: 'Browse services and jobs with powerful search and filters.' },
-              { icon: Sparkles, title: 'AI Matching', desc: 'Get personalized job recommendations based on your skills.' },
-              { icon: MessageSquare, title: 'Real-time Chat', desc: 'Communicate instantly with clients and freelancers.' },
-              { icon: Shield, title: 'Secure Platform', desc: 'Mock payment flow with transparent 15% commission.' },
+              {
+                icon: Search,
+                title: "Smart Discovery",
+                desc: "Browse services and jobs with powerful search and filters.",
+              },
+              {
+                icon: Sparkles,
+                title: "AI Matching",
+                desc: "Get personalized job recommendations based on your skills.",
+              },
+              {
+                icon: MessageSquare,
+                title: "Real-time Chat",
+                desc: "Communicate instantly with clients and freelancers.",
+              },
+              {
+                icon: Shield,
+                title: "Secure Platform",
+                desc: "Mock payment flow with transparent 15% commission.",
+              },
             ].map(({ icon: Icon, title, desc }) => (
               <Card key={title} hover className="text-center">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-500/10">
@@ -153,17 +236,35 @@ export default function LandingPage() {
       <section className="py-20 bg-surface-0">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-surface-900">How It Works</h2>
+            <h2 className="text-3xl font-bold text-surface-900">
+              How It Works
+            </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { step: '01', title: 'Create Your Profile', desc: 'Sign up as a freelancer or client. Add your skills and bio.' },
-              { step: '02', title: 'Post or Browse', desc: 'Clients post jobs. Freelancers browse and bid with AI assistance.' },
-              { step: '03', title: 'Collaborate & Review', desc: 'Chat in real-time, complete work, pay securely, and leave reviews.' },
+              {
+                step: "01",
+                title: "Create Your Profile",
+                desc: "Sign up as a freelancer or client. Add your skills and bio.",
+              },
+              {
+                step: "02",
+                title: "Post or Browse",
+                desc: "Clients post jobs. Freelancers browse and bid with AI assistance.",
+              },
+              {
+                step: "03",
+                title: "Collaborate & Review",
+                desc: "Chat in real-time, complete work, pay securely, and leave reviews.",
+              },
             ].map(({ step, title, desc }) => (
               <div key={step} className="relative text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full brand-gradient text-white text-lg font-bold">{step}</div>
-                <h3 className="font-semibold text-surface-900 text-lg">{title}</h3>
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full brand-gradient text-white text-lg font-bold">
+                  {step}
+                </div>
+                <h3 className="font-semibold text-surface-900 text-lg">
+                  {title}
+                </h3>
                 <p className="mt-2 text-sm text-surface-700">{desc}</p>
               </div>
             ))}
@@ -175,49 +276,269 @@ export default function LandingPage() {
       <section className="py-20 bg-surface-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold text-surface-900">Featured Services</h2>
-            <Link to="/services" className="text-primary-400 hover:text-primary-300 text-sm font-medium flex items-center gap-1">
+            <h2 className="text-3xl font-bold text-surface-900">
+              Featured Services
+            </h2>
+            <Link
+              to="/services"
+              className="text-primary-400 hover:text-primary-300 text-sm font-medium flex items-center gap-1"
+            >
               View all <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {featured.length > 0 ? featured.map((service) => (
-              <Card key={service.id} hover>
-                <span className="text-xs font-medium text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-full">{service.category}</span>
-                <h3 className="mt-3 font-semibold text-surface-900">{service.title}</h3>
-                <p className="mt-2 text-sm text-surface-700 line-clamp-2">{service.description}</p>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-lg font-bold text-primary-400">{formatCurrency(service.price)}</span>
-                  {service.freelancer && <Rating rating={service.freelancer.rating} size={14} />}
-                </div>
-              </Card>
-            )) : (
-              [1, 2, 3].map((i) => (
-                <Card key={i}>
-                  <div className="animate-pulse space-y-3">
-                    <div className="h-4 w-24 bg-surface-300 rounded" />
-                    <div className="h-6 w-3/4 bg-surface-300 rounded" />
-                    <div className="h-4 w-full bg-surface-300 rounded" />
-                  </div>
-                </Card>
-              ))
-            )}
+            {featured.length > 0
+              ? featured.map((service) => (
+                  <Card key={service.id} hover>
+                    <span className="text-xs font-medium text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-full">
+                      {service.category}
+                    </span>
+                    <h3 className="mt-3 font-semibold text-surface-900">
+                      {service.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-surface-700 line-clamp-2">
+                      {service.description}
+                    </p>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-lg font-bold text-primary-400">
+                        {formatCurrency(service.price)}
+                      </span>
+                      {service.freelancer && (
+                        <Rating rating={service.freelancer.rating} size={14} />
+                      )}
+                    </div>
+                  </Card>
+                ))
+              : [1, 2, 3].map((i) => (
+                  <Card key={i}>
+                    <div className="animate-pulse space-y-3">
+                      <div className="h-4 w-24 bg-surface-300 rounded" />
+                      <div className="h-6 w-3/4 bg-surface-300 rounded" />
+                      <div className="h-4 w-full bg-surface-300 rounded" />
+                    </div>
+                  </Card>
+                ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20 brand-gradient">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <Zap className="h-12 w-12 text-white/80 mx-auto mb-4" />
-          <h2 className="text-3xl font-bold text-white">Ready to Start Your Journey?</h2>
-          <p className="mt-3 text-white/80 max-w-xl mx-auto">Join thousands of students earning while learning. It takes less than 2 minutes to sign up.</p>
-          <div className="mt-8 flex justify-center gap-4">
-            <Link to="/signup"><Button size="lg" className="bg-surface-100 text-primary-700 hover:bg-surface-100/90">Sign Up as Freelancer</Button></Link>
-            <Link to="/signup"><Button size="lg" variant="outline" className="border-white/40 text-white hover:bg-surface-100/10">Hire a Student</Button></Link>
-          </div>
-        </div>
-      </section>
+<section
+  className="
+    relative isolate overflow-hidden
+    border-white/6
+    bg-[#0f0f0d]
+    py-20 sm:py-24 lg:py-28
+  "
+>
+  {/* ================= BACKGROUND ================= */}
+
+  {/* Top-left amber glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -left-32 -top-32
+      h-80 w-80
+      rounded-full
+      bg-primary-500/25
+      blur-[100px]
+      sm:h-112 sm:w-md
+    "
+  />
+
+  {/* Top-right amber glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -right-40 -top-24
+      h-96 w-96
+      rounded-full
+      bg-primary-600/20
+      blur-[120px]
+      sm:h-128 sm:w-lg
+    "
+  />
+
+  {/* Bottom-left glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -bottom-40 -left-20
+      h-80 w-80
+      rounded-full
+      bg-primary-500/20
+      blur-[110px]
+      sm:h-120 sm:w-120
+    "
+  />
+
+  {/* Bottom-right glow */}
+  <div
+    className="
+      pointer-events-none absolute
+      -bottom-40 -right-20
+      h-96 w-96
+      rounded-full
+      bg-primary-700/25
+      blur-[120px]
+      sm:h-128 sm:w-lg
+    "
+  />
+
+  {/* Large diagonal amber light */}
+  <div
+    className="
+      pointer-events-none absolute
+      left-[-15%] top-[42%]
+      h-24 w-[65%]
+      rotate-[-18deg]
+      rounded-full
+      bg-primary-500/10
+      blur-[55px]
+      sm:h-32
+    "
+  />
+
+  {/* Opposite diagonal light */}
+  <div
+    className="
+      pointer-events-none absolute
+      right-[-15%] top-[28%]
+      h-24 w-[60%]
+      rotate-18
+      rounded-full
+      bg-primary-500/10
+      blur-[60px]
+      sm:h-32
+    "
+  />
+
+  {/* Dark center vignette — keeps text readable */}
+  <div
+    className="
+      pointer-events-none absolute inset-0
+      bg-[radial-gradient(ellipse_at_center,rgba(15,15,13,0.15)_0%,rgba(15,15,13,0.35)_45%,rgba(15,15,13,0.82)_100%)]
+    "
+  />
+
+  {/* Very subtle top-to-bottom depth */}
+  <div
+    className="
+      pointer-events-none absolute inset-0
+      bg-[linear-gradient(180deg,rgba(255,255,255,0.025),transparent_35%,rgba(0,0,0,0.18))]
+    "
+  />
+
+  {/* ================= CONTENT ================= */}
+
+  <div
+    className="
+      relative z-10
+      mx-auto max-w-7xl
+      px-4 text-center
+      sm:px-6
+      lg:px-8
+    "
+  >
+    {/* Icon */}
+    <div
+      className="
+        mx-auto mb-5
+        flex h-12 w-12
+        items-center justify-center
+        rounded-xl
+        border border-primary-500/20
+        bg-primary-500/10
+      "
+    >
+      <Zap
+        className="
+          h-6 w-6
+          text-primary-400
+          sm:h-7 sm:w-7
+        "
+      />
+    </div>
+
+    {/* Heading */}
+    <h2
+      className="
+        text-2xl font-bold tracking-tight
+        text-[#f3f3ed]
+        sm:text-3xl
+        lg:text-4xl
+      "
+    >
+      Ready to Start Your Journey?
+    </h2>
+
+    {/* Description */}
+    <p
+      className="
+        mx-auto mt-4
+        max-w-xl
+        text-sm leading-6
+        text-[#aaa9a0]
+        sm:text-base sm:leading-7
+      "
+    >
+      Join thousands of students earning while learning. It takes less
+      than 2 minutes to sign up.
+    </p>
+
+    {/* Buttons */}
+    <div
+      className="
+        mx-auto mt-8
+        flex w-full max-w-md
+        flex-col gap-3
+        sm:max-w-none
+        sm:flex-row sm:justify-center sm:gap-4
+      "
+    >
+      {/* Primary */}
+      <Link to="/signup" className="w-full sm:w-auto">
+        <Button
+          size="lg"
+          className="
+            w-full
+            border border-primary-400
+            bg-primary-500
+            text-[#171713]
+            shadow-[0_4px_20px_rgba(217,154,30,0.18)]
+            transition-all duration-200
+            hover:bg-primary-400
+            hover:shadow-[0_6px_25px_rgba(217,154,30,0.25)]
+            sm:w-auto
+          "
+        >
+          Sign Up as Freelancer
+        </Button>
+      </Link>
+
+      {/* Secondary */}
+      <Link to="/signup" className="w-full sm:w-auto">
+        <Button
+          size="lg"
+          variant="outline"
+          className="
+            w-full
+            border-[#55554d]
+            bg-white/2
+            text-surface-900
+            backdrop-blur-sm
+            transition-all duration-200
+            hover:border-[#77776d]
+            hover:bg-white/6
+            sm:w-auto
+          "
+        >
+          Hire a Student
+        </Button>
+      </Link>
+    </div>
+  </div>
+</section>
     </div>
   );
 }
