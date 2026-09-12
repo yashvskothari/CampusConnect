@@ -9,7 +9,7 @@ export default function Footer() {
             <div className="flex items-center gap-2 mb-4">
             <div className="flex h-15 w-15 items-center justify-center rounded-lg overflow-hidden">
               <img
-                src="../../public/favicon.png"
+                src="favicon.png"
                 alt="GigVerse"
                 className="h-full w-full object-cover"
               />
