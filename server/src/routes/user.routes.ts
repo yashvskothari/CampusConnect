@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
 import prisma from '../utils/prisma';
 import { authenticate } from '../middleware/auth.middleware';
 import { getParam } from '../utils/params';
@@ -45,6 +46,43 @@ router.get('/:id', async (req: Request, res: Response) => {
     res.json(user);
   } catch {
     res.status(500).json({ error: 'Failed to fetch user' });
+  }
+});
+
+router.delete('/me', authenticate, async (req: Request, res: Response) => {
+  try {
+    const password = typeof req.body?.password === 'string' ? req.body.password : '';
+
+    if (!password) {
+      res.status(400).json({ error: 'Password is required to delete your account' });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.user!.userId },
+      select: { id: true, password: true },
+    });
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatches) {
+      res.status(403).json({ error: 'Incorrect password' });
+      return;
+    }
+
+    await prisma.user.delete({
+      where: { id: user.id },
+    });
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error('Delete account error:', error instanceof Error ? error.message : 'Unknown error');
+    res.status(500).json({ error: 'Failed to delete account. Please try again later.' });
   }
 });
 

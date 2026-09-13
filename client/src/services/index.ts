@@ -17,6 +17,7 @@ export const authApi = {
 export const userApi = {
   getById: (id: string) => api.get<User & { services?: Service[]; reviewsReceived?: Review[] }>(`/users/${id}`),
   update: (id: string, data: Partial<User>) => api.put<User>(`/users/${id}`, data),
+  deleteAccount: (password: string) => api.delete<{ message: string }>('/users/me', { data: { password } }),
 };
 
 export const serviceApi = {
