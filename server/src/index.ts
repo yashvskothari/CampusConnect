@@ -20,6 +20,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Render (and most PaaS hosts) sit behind a reverse proxy, so without this
+// req.ip would resolve to the proxy's address for every request, making
+// IP-based rate limiting useless. Trusting one hop is safe for a single
+// reverse proxy in front of the app.
+app.set('trust proxy', 1);
+
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
   credentials: true,
@@ -28,7 +34,7 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'GigVerse API', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', service: 'Gigverse API', timestamp: new Date().toISOString() });
 });
 
 app.use('/api/auth', authRoutes);
@@ -49,7 +55,7 @@ const httpServer = http.createServer(app);
 setupSocket(httpServer);
 
 httpServer.listen(PORT, () => {
-  console.log(`GigVerse server running on port ${PORT}`);
+  console.log(`Gigverse server running on port ${PORT}`);
 });
 
 export default app;

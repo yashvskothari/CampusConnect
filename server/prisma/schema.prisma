@@ -53,6 +53,33 @@ model User {
   paymentsAsClient Payment[]          @relation("ClientPayments")
   paymentsAsFreelancer Payment[]      @relation("FreelancerPayments")
   conversations    ConversationParticipant[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Persisted record of every forgot-password request, used to rate-limit
+// by both email and IP address. Storing this in the database (instead of
+// in-memory) means the limit survives server restarts and works correctly
+// even if the API ever runs as more than one instance.
+model PasswordResetAttempt {
+  id         String   @id @default(cuid())
+  // Either "email:<normalized email>" or "ip:<ip address>"
+  identifier String
+  createdAt  DateTime @default(now())
+
+  @@index([identifier, createdAt])
 }
 
 model Service {
