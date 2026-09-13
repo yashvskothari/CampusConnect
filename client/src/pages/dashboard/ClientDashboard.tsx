@@ -43,7 +43,7 @@ export default function ClientDashboard() {
         {[
           { label: 'Posted Jobs', value: jobs.length, icon: Briefcase, color: 'bg-primary-500/15 text-primary-400' },
           { label: 'Open Jobs', value: openJobs.length, icon: Briefcase, color: 'bg-green-100 text-green-600' },
-          { label: 'Pending Bids', value: pendingBids.length, icon: Users, color: 'bg-purple-100 text-purple-600' },
+          { label: 'Pending Bids', value: pendingBids.length, icon: Users, color: 'bg-teal-100 text-teal-700' },
           { label: 'In Progress', value: inProgress.length, icon: DollarSign, color: 'bg-amber-100 text-amber-600' },
         ].map(({ label, value, icon: Icon, color }) => (
           <Card key={label}>

@@ -1,160 +1,91 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary — deep emerald green, used sparingly */
-  --color-primary-50: #f0fdf4;
-  --color-primary-100: #dcfce7;
-  --color-primary-200: #bbf7d0;
-  --color-primary-300: #86efac;
-  --color-primary-400: #4ade80;
-  --color-primary-500: #22c55e;
-  --color-primary-600: #16a34a;
-  --color-primary-700: #15803d;
-  --color-primary-800: #166534;
-  --color-primary-900: #14532d;
+  /* Primary = confident marketplace green */
+  --color-primary-50: #ecfdf5;
+  --color-primary-100: #d1fae5;
+  --color-primary-200: #a7f3d0;
+  --color-primary-300: #6ee7b7;
+  --color-primary-400: #34d399;
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-primary-700: #047857;
+  --color-primary-800: #065f46;
+  --color-primary-900: #064e3b;
 
-  /* Accent — muted green/stone neutral */
-  --color-accent-50: #f7faf7;
-  --color-accent-100: #eef4ef;
-  --color-accent-200: #dce8df;
-  --color-accent-300: #c7d7cb;
-  --color-accent-400: #9aaa9d;
-  --color-accent-500: #6b7f70;
-  --color-accent-600: #526156;
-  --color-accent-700: #3f4b42;
-  --color-accent-800: #273029;
-  --color-accent-900: #161c17;
+  /* Accent = cool teal for secondary actions */
+  --color-accent-50: #f0fdfa;
+  --color-accent-100: #ccfbf1;
+  --color-accent-200: #99f6e4;
+  --color-accent-300: #5eead4;
+  --color-accent-400: #2dd4bf;
+  --color-accent-500: #14b8a6;
+  --color-accent-600: #0d9488;
+  --color-accent-700: #0f766e;
+  --color-accent-800: #115e59;
+  --color-accent-900: #134e4a;
 
-  /* Dark green-charcoal surfaces */
-  --color-surface-0: #0c120e;
-  --color-surface-50: #101812;
-  --color-surface-100: #151f18;
-  --color-surface-200: #1b271e;
-  --color-surface-300: #243229;
-  --color-surface-400: #304136;
-  --color-surface-500: #405345;
-  --color-surface-600: #5d7162;
-  --color-surface-700: #819185;
-  --color-surface-800: #b4c0b6;
-  --color-surface-900: #edf4ee;
+  /* Dark neutrals for backgrounds / cards / borders */
+  --color-surface-0: #0a0a0f;
+  --color-surface-50: #0e0e15;
+  --color-surface-100: #13131c;
+  --color-surface-200: #191927;
+  --color-surface-300: #22222f;
+  --color-surface-400: #2b2b3a;
+  --color-surface-500: #38384a;
+  --color-surface-600: #55556b;
+  --color-surface-700: #7a7a94;
+  --color-surface-800: #a6a6ba;
+  --color-surface-900: #e4e4ec;
 }
-
-
-/* ─────────────────────────────────────
-   Base
-───────────────────────────────────── */
 
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  background: #0c120e;
-  color: #edf4ee;
-
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  @apply bg-surface-0 text-surface-900 antialiased;
+  scroll-behavior: smooth;
 }
-
-
-/* ─────────────────────────────────────
-   Selection
-───────────────────────────────────── */
 
 ::selection {
-  background: rgba(34, 197, 94, 0.20);
-  color: #ffffff;
+  @apply bg-primary-500/40 text-white;
 }
 
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0) scale(0.98);
+  filter: blur(4px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
 
-/* ─────────────────────────────────────
-   Brand
-───────────────────────────────────── */
+.reveal.visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
 
-/*
-  No gradient.
-  Use this only for important brand elements.
-*/
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
 
 .brand-gradient {
-  background: #22c55e;
+  background-image: linear-gradient(135deg, #10b981, #0f766e);
 }
 
 .brand-gradient-text {
-  color: #5ee486;
-}
-
-
-/* ─────────────────────────────────────
-   Scrollbar
-───────────────────────────────────── */
-
-::-webkit-scrollbar {
-  width: 7px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0c120e;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #304136;
-  border-radius: 8px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #405345;
-}
-
-
-/* ─────────────────────────────────────
-   Forms
-───────────────────────────────────── */
-
-input,
-textarea,
-select {
-  outline: none;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: #5d7162;
-}
-
-
-/* ─────────────────────────────────────
-   Focus
-───────────────────────────────────── */
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid rgba(34, 197, 94, 0.55);
-  outline-offset: 2px;
-}
-
-
-/* ─────────────────────────────────────
-   Subtle borders
-───────────────────────────────────── */
-
-.soft-border {
-  border: 1px solid rgba(255, 255, 255, 0.075);
-}
-
-.soft-divider {
-  border-color: rgba(255, 255, 255, 0.075);
+  background-image: linear-gradient(90deg, #34d399, #2dd4bf);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

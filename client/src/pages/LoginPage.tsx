@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -63,6 +63,15 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const from = (location.state as { from?: { pathname: string } })?.from
     ?.pathname;
+
+  useEffect(() => {
+    if ((location.state as { resetSuccess?: boolean })?.resetSuccess) {
+      toast.success(
+        "Password reset successfully. You can now log in with your new password."
+      );
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
   const {
     register,
@@ -146,6 +155,14 @@ export default function LoginPage() {
     </span>
   </button>
 </div>
+          <div className="text-right">
+            <Link
+              to="/forgot-password"
+              className="text-sm font-medium text-primary-400 hover:text-primary-300"
+            >
+              Forgot Password?
+            </Link>
+          </div>
           <Button type="submit" className="w-full" loading={loading}>
             Sign In
           </Button>
@@ -161,8 +178,8 @@ export default function LoginPage() {
         </p>
         <div className="mt-4 p-3 bg-surface-50 rounded-lg text-xs text-surface-700">
           <p className="font-medium text-surface-800 mb-1">Demo accounts:</p>
-          <p>Freelancer: freelancer@campusconnection.com</p>
-          <p>Client: client@campusconnection.com</p>
+          <p>Freelancer: freelancer@gigverse.com</p>
+          <p>Client: client@gigverse.com</p>
           <p>Password: password@123</p>
         </div>
       </Card>

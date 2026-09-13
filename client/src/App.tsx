@@ -11,6 +11,8 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ServicesPage from "./pages/ServicesPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import JobsPage from "./pages/JobsPage";
@@ -39,6 +41,8 @@ export default function App() {
             <Route index element={<LandingPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="signup" element={<SignupPage />} />
+            <Route path="forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="reset-password" element={<ResetPasswordPage />} />
             <Route path="services" element={<ServicesPage />} />
             <Route path="jobs" element={<JobsPage />} />
             <Route path="jobs/:id" element={<JobDetailPage />} />

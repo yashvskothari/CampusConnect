@@ -36,7 +36,7 @@ export default function FreelancerDashboard() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Services Listed', value: services.length, icon: Briefcase, color: 'bg-primary-500/15 text-primary-400' },
-          { label: 'Active Bids', value: activeBids.length, icon: DollarSign, color: 'bg-purple-100 text-purple-600' },
+          { label: 'Active Bids', value: activeBids.length, icon: DollarSign, color: 'bg-teal-100 text-teal-700' },
           { label: 'Active Jobs', value: acceptedJobs.length, icon: Briefcase, color: 'bg-green-100 text-green-600' },
           { label: 'Rating', value: user?.rating.toFixed(1) ?? '0', icon: Sparkles, color: 'bg-amber-100 text-amber-600' },
         ].map(({ label, value, icon: Icon, color }) => (
@@ -54,7 +54,7 @@ export default function FreelancerDashboard() {
 
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2"><Sparkles className="h-5 w-5 text-purple-600" /> AI Job Recommendations</h2>
+          <h2 className="text-lg font-semibold flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary-400" /> AI Job Recommendations</h2>
           <Link to="/dashboard/freelancer/recommendations" className="text-sm text-primary-400 hover:text-primary-300">View all</Link>
         </div>
         {recommendations.length === 0 ? (
@@ -68,7 +68,7 @@ export default function FreelancerDashboard() {
                   <p className="text-sm text-surface-700">{formatCurrency(job.budget)} · {job.category}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-purple-600">{job.matchScore}% match</span>
+                  <span className="text-sm font-semibold text-teal-400">{job.matchScore}% match</span>
                   <Link to={`/jobs/${job.id}`}><Button size="sm" variant="outline">View</Button></Link>
                 </div>
               </div>
