@@ -9,6 +9,24 @@ interface AvatarProps {
   onEdit?: () => void;
 }
 
+const BACKEND_URL = 'https://campusconnect-mfx7.onrender.com';
+
+function getAvatarUrl(src?: string) {
+  if (!src) return undefined;
+
+  // Already an absolute URL
+  if (src.startsWith('http://') || src.startsWith('https://')) {
+    return src;
+  }
+
+  // Uploaded files are served by the backend, not Vercel
+  if (src.startsWith('/uploads/')) {
+    return `${BACKEND_URL}${src}`;
+  }
+
+  return src;
+}
+
 export default function Avatar({
   name,
   src,
@@ -29,9 +47,11 @@ export default function Avatar({
     lg: 'text-xl',
   };
 
-  const avatar = src ? (
+  const avatarUrl = getAvatarUrl(src);
+
+  const avatar = avatarUrl ? (
     <img
-      src={src}
+      src={avatarUrl}
       alt={name}
       className={cn(
         'block rounded-full object-cover',
