@@ -39,12 +39,44 @@
   --color-surface-900: #e4e4ec;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   @apply bg-surface-0 text-surface-900 antialiased;
+  scroll-behavior: smooth;
 }
 
 ::selection {
   @apply bg-primary-500/40 text-white;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0) scale(0.98);
+  filter: blur(4px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
 }
 
 .brand-gradient {

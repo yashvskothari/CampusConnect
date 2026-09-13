@@ -7,10 +7,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg brand-gradient font-bold text-white text-sm">
-                C
-              </div>
-              <span className="text-lg font-bold text-surface-900">Gigverse</span>
+              <img
+                src="/gigverse-logo.svg"
+                alt="Gigverse logo"
+                className="h-8 w-auto object-contain"
+              />
             </div>
             <p className="text-sm text-surface-700">Connect. Collaborate. Create. The AI-powered freelance marketplace built for students.</p>
           </div>

@@ -34,13 +34,11 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg brand-gradient font-bold text-white">
-              C
-            </div>
-            <span className="flex items-baseline gap-1">
-              <span className="text-lg font-bold text-surface-900">Gigverse</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider brand-gradient-text">AI</span>
-            </span>
+            <img
+              src="/gigverse-logo.svg"
+              alt="Gigverse logo"
+              className="h-9 w-auto object-contain"
+            />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">

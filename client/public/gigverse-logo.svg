@@ -1,0 +1,24 @@
+<svg width="320" height="80" viewBox="0 0 320 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gigverseGradient" x1="8" y1="8" x2="72" y2="72" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34D399"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+    <linearGradient id="gigverseText" x1="84" y1="22" x2="260" y2="62" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#064E3B"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="8" y="8" width="64" height="64" rx="18" fill="url(#gigverseGradient)"/>
+
+  <path d="M51 22C43.3 18.2 34.4 18.2 26.6 22.2C18 26.5 12.9 35.1 13 44.3C13.1 53.5 18.5 62 27.4 65.8C36.2 69.6 46.3 68.9 54.1 63.5C61.8 58.2 66.9 49.7 66.5 40.8H43.3C42.6 44.6 40.8 48 37.9 50.2C34.7 52.8 30.5 53.7 26.7 52.7C22.8 51.6 19.8 48.6 18.6 44.9C17.4 41.1 18.1 36.6 20.9 33.4C23.5 30.5 27.5 28.8 31.8 28.9C36.6 29 40.7 31.4 43.3 35.3H66.5C65.8 28.2 60.8 22.6 54.7 20.1L51 22Z" fill="white" fill-opacity="0.96"/>
+
+  <path d="M51 48.6H66.5C65.8 56.1 60.7 62.5 53.5 65.8C45.6 69.3 35.8 68.8 28.1 63.9C20.9 59.3 17.1 51.4 18.4 43.5C19.5 35.8 25.2 28.8 33.2 25.3C41 21.7 50.2 22 57.3 26.4" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+
+  <path d="M32 41.5H51.8" stroke="#D1FAE5" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="53.5" cy="41.5" r="4" fill="#D1FAE5"/>
+
+  <text x="90" y="50" fill="url(#gigverseText)" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="31" font-weight="700" letter-spacing="-0.8">Gigverse</text>
+  <text x="235" y="24" fill="#0F766E" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="2.2">AI</text>
+</svg>

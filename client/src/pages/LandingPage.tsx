@@ -33,17 +33,36 @@ export default function LandingPage() {
 
   useEffect(() => {
     serviceApi.getAll().then(({ data }) => setFeatured(data.slice(0, 3))).catch(() => {});
+
+    const revealElements = document.querySelectorAll('[data-reveal]');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      {
+        threshold: 0.12,
+        rootMargin: '0px 0px -8% 0px',
+      }
+    );
+
+    revealElements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
   }, []);
 
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-surface-0 text-surface-900">
+      <section className="relative overflow-hidden bg-surface-0 text-surface-900" data-reveal>
         <div className="pointer-events-none absolute -top-40 right-0 h-96 w-96 rounded-full bg-primary-600/20 blur-3xl" />
         <div className="pointer-events-none absolute top-40 left-0 h-72 w-72 rounded-full bg-accent-600/10 blur-3xl" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
           <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
-            <div>
+            <div data-reveal style={{ transitionDelay: '80ms' }}>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
                 Connecting Students.<br />
                 Creating <span className="brand-gradient-text">Opportunities.</span>
@@ -75,7 +94,7 @@ export default function LandingPage() {
           </div>
 
           {/* Search bar */}
-          <div className="mt-12 flex flex-col sm:flex-row gap-3 rounded-2xl border border-surface-300 bg-surface-100 p-3">
+          <div className="mt-12 flex flex-col sm:flex-row gap-3 rounded-2xl border border-surface-300 bg-surface-100 p-3 reveal" data-reveal style={{ transitionDelay: '180ms' }}>
             <div className="flex-1 flex items-center gap-2 px-3">
               <Search className="h-5 w-5 text-surface-700 shrink-0" />
               <input
@@ -87,14 +106,16 @@ export default function LandingPage() {
           </div>
 
           {/* Categories */}
-          <div className="mt-14">
+          <div className="mt-14 reveal" data-reveal style={{ transitionDelay: '220ms' }}>
             <h2 className="text-lg font-semibold text-surface-900 mb-4">Explore Top Categories</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-              {categories.map(({ icon: Icon, label, count, color }) => (
+              {categories.map(({ icon: Icon, label, count, color }, index) => (
                 <Link
                   key={label}
                   to="/jobs"
-                  className="rounded-xl border border-surface-300 bg-surface-100 p-4 hover:border-primary-500/50 transition-colors"
+                  className="rounded-xl border border-surface-300 bg-surface-100 p-4 hover:border-primary-500/50 transition-colors reveal"
+                  data-reveal
+                  style={{ transitionDelay: `${260 + index * 60}ms` }}
                 >
                   <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${color} mb-6`}>
                     <Icon className="h-4.5 w-4.5" />
@@ -108,8 +129,8 @@ export default function LandingPage() {
 
           {/* Stats */}
           <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-6 border-t border-surface-300 pt-10">
-            {stats.map(({ icon: Icon, value, label }) => (
-              <div key={label} className="flex items-center gap-3">
+            {stats.map(({ icon: Icon, value, label }, index) => (
+              <div key={label} className="flex items-center gap-3 reveal" data-reveal style={{ transitionDelay: `${320 + index * 80}ms` }}>
                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-surface-200 border border-surface-300 text-primary-400">
                   <Icon className="h-5 w-5" />
                 </div>
@@ -126,7 +147,7 @@ export default function LandingPage() {
       {/* Features */}
       <section className="py-20 bg-surface-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 reveal" data-reveal style={{ transitionDelay: '120ms' }}>
             <h2 className="text-3xl font-bold text-surface-900">Why Gigverse?</h2>
             <p className="mt-3 text-surface-700 max-w-2xl mx-auto">Everything you need to freelance as a student or hire student talent.</p>
           </div>
@@ -136,14 +157,16 @@ export default function LandingPage() {
               { icon: Sparkles, title: 'AI Matching', desc: 'Get personalized job recommendations based on your skills.' },
               { icon: MessageSquare, title: 'Real-time Chat', desc: 'Communicate instantly with clients and freelancers.' },
               { icon: Shield, title: 'Secure Platform', desc: 'Mock payment flow with transparent 15% commission.' },
-            ].map(({ icon: Icon, title, desc }) => (
-              <Card key={title} hover className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-500/10">
-                  <Icon className="h-6 w-6 text-primary-400" />
-                </div>
-                <h3 className="font-semibold text-surface-900">{title}</h3>
-                <p className="mt-2 text-sm text-surface-700">{desc}</p>
-              </Card>
+            ].map(({ icon: Icon, title, desc }, index) => (
+              <div key={title} className="reveal" data-reveal style={{ transitionDelay: `${180 + index * 90}ms` }}>
+                <Card hover className="text-center h-full">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-500/10">
+                    <Icon className="h-6 w-6 text-primary-400" />
+                  </div>
+                  <h3 className="font-semibold text-surface-900">{title}</h3>
+                  <p className="mt-2 text-sm text-surface-700">{desc}</p>
+                </Card>
+              </div>
             ))}
           </div>
         </div>
@@ -152,7 +175,7 @@ export default function LandingPage() {
       {/* How it works */}
       <section className="py-20 bg-surface-0">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-12 reveal" data-reveal style={{ transitionDelay: '120ms' }}>
             <h2 className="text-3xl font-bold text-surface-900">How It Works</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -160,8 +183,8 @@ export default function LandingPage() {
               { step: '01', title: 'Create Your Profile', desc: 'Sign up as a freelancer or client. Add your skills and bio.' },
               { step: '02', title: 'Post or Browse', desc: 'Clients post jobs. Freelancers browse and bid with AI assistance.' },
               { step: '03', title: 'Collaborate & Review', desc: 'Chat in real-time, complete work, pay securely, and leave reviews.' },
-            ].map(({ step, title, desc }) => (
-              <div key={step} className="relative text-center">
+            ].map(({ step, title, desc }, index) => (
+              <div key={step} className="relative text-center reveal" data-reveal style={{ transitionDelay: `${180 + index * 100}ms` }}>
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full brand-gradient text-white text-lg font-bold">{step}</div>
                 <h3 className="font-semibold text-surface-900 text-lg">{title}</h3>
                 <p className="mt-2 text-sm text-surface-700">{desc}</p>
@@ -174,23 +197,25 @@ export default function LandingPage() {
       {/* Featured Services */}
       <section className="py-20 bg-surface-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 reveal" data-reveal style={{ transitionDelay: '100ms' }}>
             <h2 className="text-3xl font-bold text-surface-900">Featured Services</h2>
             <Link to="/services" className="text-primary-400 hover:text-primary-300 text-sm font-medium flex items-center gap-1">
               View all <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {featured.length > 0 ? featured.map((service) => (
-              <Card key={service.id} hover>
-                <span className="text-xs font-medium text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-full">{service.category}</span>
-                <h3 className="mt-3 font-semibold text-surface-900">{service.title}</h3>
-                <p className="mt-2 text-sm text-surface-700 line-clamp-2">{service.description}</p>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-lg font-bold text-primary-400">{formatCurrency(service.price)}</span>
-                  {service.freelancer && <Rating rating={service.freelancer.rating} size={14} />}
-                </div>
-              </Card>
+            {featured.length > 0 ? featured.map((service, index) => (
+              <div key={service.id} className="reveal" data-reveal style={{ transitionDelay: `${160 + index * 90}ms` }}>
+                <Card hover>
+                  <span className="text-xs font-medium text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-full">{service.category}</span>
+                  <h3 className="mt-3 font-semibold text-surface-900">{service.title}</h3>
+                  <p className="mt-2 text-sm text-surface-700 line-clamp-2">{service.description}</p>
+                  <div className="mt-4 flex items-center justify-between">
+                    <span className="text-lg font-bold text-primary-400">{formatCurrency(service.price)}</span>
+                    {service.freelancer && <Rating rating={service.freelancer.rating} size={14} />}
+                  </div>
+                </Card>
+              </div>
             )) : (
               [1, 2, 3].map((i) => (
                 <Card key={i}>
@@ -207,7 +232,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 brand-gradient">
+      <section className="py-20 brand-gradient reveal" data-reveal style={{ transitionDelay: '120ms' }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <Zap className="h-12 w-12 text-white/80 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-white">Ready to Start Your Journey?</h2>
