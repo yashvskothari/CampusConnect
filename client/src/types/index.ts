@@ -1,4 +1,5 @@
 export type Role = 'FREELANCER' | 'CLIENT' | 'ADMIN';
+export type UserStatus = 'ACTIVE' | 'SUSPENDED';
 
 export interface User {
   id: string;
@@ -9,6 +10,7 @@ export interface User {
   skills: string[];
   avatar?: string;
   rating: number;
+  status?: UserStatus;
   createdAt: string;
 }
 
@@ -115,3 +117,88 @@ export const CATEGORIES = [
   'Marketing',
   'Mobile Development',
 ] as const;
+
+
+/* ---------------- Admin ---------------- */
+
+export interface Paginated<T> {
+  data: T[];
+  pagination: { total: number; page: number; limit: number; totalPages: number };
+}
+
+export interface AdminUser extends User {
+  status: UserStatus;
+  suspendedAt?: string | null;
+  suspensionReason?: string | null;
+  lastLoginAt?: string | null;
+  _count?: { services: number; jobs: number; bids: number };
+}
+
+export interface AdminUserDetail extends AdminUser {
+  _count?: {
+    services: number;
+    jobs: number;
+    bids: number;
+    reviewsGiven: number;
+    reviewsReceived: number;
+    paymentsAsClient: number;
+    paymentsAsFreelancer: number;
+  };
+  recentJobs: { id: string; title: string; status: string; budget: number; createdAt: string }[];
+  recentBids: { id: string; quote: number; status: string; jobId: string; createdAt: string }[];
+  recentPayments: { id: string; amount: number; commission: number; status: string; createdAt: string }[];
+}
+
+export interface AdminStats {
+  users: {
+    total: number;
+    clients: number;
+    freelancers: number;
+    admins: number;
+    active: number;
+    suspended: number;
+    newLast7Days: number;
+    newLast30Days: number;
+  };
+  jobs: { total: number; open: number; inProgress: number; completed: number; cancelled: number };
+  marketplace: { services: number; bids: number; reviews: number };
+  payments: {
+    completedCount: number;
+    totalVolume: number;
+    totalCommission: number;
+    pendingCount: number;
+    pendingVolume: number;
+  };
+  signupsLast30Days: { date: string; count: number }[];
+}
+
+type PersonRef = { id: string; name: string; email: string };
+
+export interface AdminJob extends Omit<Job, 'client'> {
+  client?: PersonRef;
+}
+
+export interface AdminService extends Omit<Service, 'freelancer'> {
+  freelancer?: PersonRef;
+}
+
+export interface AdminReview extends Omit<Review, 'reviewer' | 'reviewee'> {
+  reviewer?: PersonRef;
+  reviewee?: PersonRef;
+}
+
+export interface AdminPayment extends Omit<Payment, 'client' | 'freelancer'> {
+  client?: PersonRef;
+  freelancer?: PersonRef;
+}
+
+export interface AuditLog {
+  id: string;
+  adminId: string | null;
+  admin?: PersonRef | null;
+  action: string;
+  targetType: string;
+  targetId: string | null;
+  details?: Record<string, unknown> | null;
+  createdAt: string;
+}

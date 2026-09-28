@@ -9,6 +9,15 @@ import type {
   Conversation,
   Message,
   BidSuggestion,
+  Paginated,
+  AdminUser,
+  AdminUserDetail,
+  AdminStats,
+  AdminJob,
+  AdminService,
+  AdminReview,
+  AdminPayment,
+  AuditLog,
 } from '../types';
 
 export const authApi = {
@@ -172,4 +181,73 @@ export const recommendationApi = {
     api.get<BidSuggestion>(
       `/recommendations/bid/${jobId}`
     ),
+};
+
+export const adminApi = {
+  stats: () => api.get<AdminStats>('/admin/stats'),
+
+  // Users
+  getUsers: (params?: Record<string, string | number>) =>
+    api.get<Paginated<AdminUser>>('/admin/users', { params }),
+
+  getUser: (id: string) => api.get<AdminUserDetail>(`/admin/users/${id}`),
+
+  createUser: (data: {
+    name: string;
+    email: string;
+    password: string;
+    role: 'CLIENT' | 'FREELANCER';
+    bio?: string;
+    skills?: string[];
+  }) => api.post<AdminUser>('/admin/users', data),
+
+  updateUser: (
+    id: string,
+    data: { name?: string; email?: string; bio?: string | null; skills?: string[]; role?: 'CLIENT' | 'FREELANCER' }
+  ) => api.put<AdminUser>(`/admin/users/${id}`, data),
+
+  suspendUser: (id: string, reason?: string) =>
+    api.patch<AdminUser>(`/admin/users/${id}/suspend`, { reason }),
+
+  unsuspendUser: (id: string) => api.patch<AdminUser>(`/admin/users/${id}/unsuspend`),
+
+  resetUserPassword: (id: string, newPassword: string) =>
+    api.post<{ message: string }>(`/admin/users/${id}/reset-password`, { newPassword }),
+
+  deleteUser: (id: string, force = false) =>
+    api.delete<{ message: string }>(`/admin/users/${id}`, { params: force ? { force: 'true' } : undefined }),
+
+  bulkUsers: (data: { action: 'suspend' | 'unsuspend' | 'delete'; userIds: string[]; reason?: string }) =>
+    api.post<{ action: string; requested: number; affected: number; skipped: number }>('/admin/users/bulk', data),
+
+  exportUsers: (params?: Record<string, string>) =>
+    api.get<Blob>('/admin/users/export', { params, responseType: 'blob' }),
+
+  // Jobs
+  getJobs: (params?: Record<string, string | number>) =>
+    api.get<Paginated<AdminJob>>('/admin/jobs', { params }),
+  updateJobStatus: (id: string, status: string) =>
+    api.patch(`/admin/jobs/${id}/status`, { status }),
+  deleteJob: (id: string) => api.delete(`/admin/jobs/${id}`),
+
+  // Services
+  getServices: (params?: Record<string, string | number>) =>
+    api.get<Paginated<AdminService>>('/admin/services', { params }),
+  deleteService: (id: string) => api.delete(`/admin/services/${id}`),
+
+  // Reviews
+  getReviews: (params?: Record<string, string | number>) =>
+    api.get<Paginated<AdminReview>>('/admin/reviews', { params }),
+  deleteReview: (id: string) => api.delete(`/admin/reviews/${id}`),
+
+  // Payments
+  getPayments: (params?: Record<string, string | number>) =>
+    api.get<Paginated<AdminPayment> & { totals: { amount: number; commission: number } }>(
+      '/admin/payments',
+      { params }
+    ),
+
+  // Audit log
+  getAuditLogs: (params?: Record<string, string | number>) =>
+    api.get<Paginated<AuditLog>>('/admin/audit-logs', { params }),
 };

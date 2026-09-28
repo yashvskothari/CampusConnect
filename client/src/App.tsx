@@ -5,6 +5,7 @@ import MainLayout from "./layouts/MainLayout";
 import DashboardLayout, {
   freelancerLinks,
   clientLinks,
+  adminLinks,
 } from "./layouts/DashboardLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -30,6 +31,13 @@ import FreelancerRecommendationsPage from "./pages/dashboard/FreelancerRecommend
 import ClientDashboard from "./pages/dashboard/ClientDashboard";
 import ClientBidsPage from "./pages/dashboard/ClientBidsPage";
 import ClientPaymentsPage from "./pages/dashboard/ClientPaymentsPage";
+import AdminOverviewPage from "./pages/admin/AdminOverviewPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminJobsPage from "./pages/admin/AdminJobsPage";
+import AdminServicesPage from "./pages/admin/AdminServicesPage";
+import AdminReviewsPage from "./pages/admin/AdminReviewsPage";
+import AdminPaymentsPage from "./pages/admin/AdminPaymentsPage";
+import AdminAuditLogPage from "./pages/admin/AdminAuditLogPage";
 
 export default function App() {
   return (
@@ -108,6 +116,23 @@ export default function App() {
               <Route index element={<ClientDashboard />} />
               <Route path="bids" element={<ClientBidsPage />} />
               <Route path="payments" element={<ClientPaymentsPage />} />
+            </Route>
+
+            <Route
+              path="admin"
+              element={
+                <ProtectedRoute roles={["ADMIN"]}>
+                  <DashboardLayout links={adminLinks} mobileNav />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<AdminOverviewPage />} />
+              <Route path="users" element={<AdminUsersPage />} />
+              <Route path="jobs" element={<AdminJobsPage />} />
+              <Route path="services" element={<AdminServicesPage />} />
+              <Route path="reviews" element={<AdminReviewsPage />} />
+              <Route path="payments" element={<AdminPaymentsPage />} />
+              <Route path="audit-log" element={<AdminAuditLogPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

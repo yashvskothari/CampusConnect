@@ -15,7 +15,7 @@ export function setupSocket(httpServer: HttpServer): Server {
     },
   });
 
-  io.use((socket: AuthenticatedSocket, next) => {
+  io.use(async (socket: AuthenticatedSocket, next) => {
     const token = socket.handshake.auth.token;
     if (!token) {
       next(new Error('Authentication required'));
@@ -23,6 +23,11 @@ export function setupSocket(httpServer: HttpServer): Server {
     }
     try {
       const decoded = verifyToken(token);
+      const user = await prisma.user.findUnique({ where: { id: decoded.userId }, select: { status: true } });
+      if (!user || user.status === 'SUSPENDED') {
+        next(new Error('Account unavailable'));
+        return;
+      }
       socket.userId = decoded.userId;
       next();
     } catch {

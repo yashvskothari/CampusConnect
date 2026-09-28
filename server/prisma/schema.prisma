@@ -13,6 +13,11 @@ enum Role {
   ADMIN
 }
 
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
 enum JobStatus {
   OPEN
   IN_PROGRESS
@@ -43,6 +48,14 @@ model User {
   avatar    String?
   rating    Float    @default(0)
   createdAt DateTime @default(now())
+
+  // Admin moderation fields
+  status           UserStatus @default(ACTIVE)
+  suspendedAt      DateTime?
+  suspensionReason String?
+  lastLoginAt      DateTime?
+
+  auditLogs        AuditLog[] @relation("AdminAuditLogs")
 
   services         Service[]
   jobs             Job[]              @relation("ClientJobs")
@@ -175,4 +188,23 @@ model Payment {
   freelancer   User          @relation("FreelancerPayments", fields: [freelancerId], references: [id], onDelete: Cascade)
   jobId        String?
   createdAt    DateTime      @default(now())
+}
+
+
+// Every sensitive action taken by an admin is recorded here.
+// adminId is set to NULL if the admin account is later deleted,
+// so the history is preserved.
+model AuditLog {
+  id         String   @id @default(cuid())
+  adminId    String?
+  admin      User?    @relation("AdminAuditLogs", fields: [adminId], references: [id], onDelete: SetNull)
+  action     String
+  targetType String
+  targetId   String?
+  details    Json?
+  createdAt  DateTime @default(now())
+
+  @@index([adminId])
+  @@index([targetType, targetId])
+  @@index([createdAt])
 }

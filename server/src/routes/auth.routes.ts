@@ -30,13 +30,16 @@ router.post('/signup', async (req: Request, res: Response) => {
       return;
     }
 
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const existing = await prisma.user.findFirst({
+      where: { email: { equals: String(email).trim(), mode: 'insensitive' } },
+    });
     if (existing) {
       res.status(409).json({ error: 'Email already registered' });
       return;
     }
 
-    const validRoles: Role[] = ['FREELANCER', 'CLIENT', 'ADMIN'];
+    // ADMIN accounts can never be self-registered (create them via the seed script).
+    const validRoles: Role[] = ['FREELANCER', 'CLIENT'];
     const userRole: Role = validRoles.includes(role) ? role : 'FREELANCER';
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -68,7 +71,9 @@ router.post('/login', async (req: Request, res: Response) => {
       return;
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: String(email).trim(), mode: 'insensitive' } },
+    });
     if (!user) {
       res.status(401).json({ error: 'Invalid credentials' });
       return;
@@ -79,6 +84,13 @@ router.post('/login', async (req: Request, res: Response) => {
       res.status(401).json({ error: 'Invalid credentials' });
       return;
     }
+
+    if (user.status === 'SUSPENDED') {
+      res.status(403).json({ error: 'Your account has been suspended', code: 'ACCOUNT_SUSPENDED' });
+      return;
+    }
+
+    await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
 
     const token = signToken({ userId: user.id, email: user.email, role: user.role });
     const { password: _, ...userWithoutPassword } = user;
