@@ -32,8 +32,21 @@ router.get('/', authenticate, async (req: Request, res: Response) => {
 router.post('/', authenticate, authorize('FREELANCER', 'ADMIN'), async (req: Request, res: Response) => {
   try {
     const { jobId, proposal, quote, deliveryDays } = req.body;
-    if (!jobId || !proposal || !quote || !deliveryDays) {
+    if (!jobId || !proposal || quote === undefined || quote === null || !deliveryDays) {
       res.status(400).json({ error: 'All fields are required' });
+      return;
+    }
+
+    const numQuote = Number(quote);
+    const numDeliveryDays = Math.round(Number(deliveryDays));
+
+    if (isNaN(numQuote) || numQuote <= 0) {
+      res.status(400).json({ error: 'Quote must be a positive number' });
+      return;
+    }
+
+    if (isNaN(numDeliveryDays) || numDeliveryDays <= 0) {
+      res.status(400).json({ error: 'Delivery days must be at least 1 day' });
       return;
     }
 
@@ -43,12 +56,17 @@ router.post('/', authenticate, authorize('FREELANCER', 'ADMIN'), async (req: Req
       return;
     }
 
+    if (job.clientId === req.user!.userId) {
+      res.status(400).json({ error: 'You cannot bid on your own job' });
+      return;
+    }
+
     const bid = await prisma.bid.create({
       data: {
         jobId,
-        proposal,
-        quote: Number(quote),
-        deliveryDays: Number(deliveryDays),
+        proposal: String(proposal).trim(),
+        quote: numQuote,
+        deliveryDays: numDeliveryDays,
         freelancerId: req.user!.userId,
       },
       include: {
@@ -58,6 +76,7 @@ router.post('/', authenticate, authorize('FREELANCER', 'ADMIN'), async (req: Req
     });
     res.status(201).json(bid);
   } catch (error: any) {
+    console.error('Failed to submit bid:', error);
     if (error.code === 'P2002') {
       res.status(409).json({ error: 'You have already bid on this job' });
       return;
@@ -78,7 +97,11 @@ router.patch('/:id/accept', authenticate, authorize('CLIENT', 'ADMIN'), async (r
       return;
     }
     if (bid.job.clientId !== req.user!.userId && req.user!.role !== 'ADMIN') {
-      res.status(403).json({ error: 'Not authorized' });
+      res.status(403).json({ error: 'Not authorized: You are not the client who posted this job' });
+      return;
+    }
+    if (bid.status === 'ACCEPTED') {
+      res.status(400).json({ error: 'This bid has already been accepted' });
       return;
     }
 
@@ -101,7 +124,8 @@ router.patch('/:id/accept', authenticate, authorize('CLIENT', 'ADMIN'), async (r
     });
 
     res.json(updatedBid);
-  } catch {
+  } catch (error) {
+    console.error('Failed to accept bid:', error);
     res.status(500).json({ error: 'Failed to accept bid' });
   }
 });
@@ -118,7 +142,7 @@ router.patch('/:id/reject', authenticate, authorize('CLIENT', 'ADMIN'), async (r
       return;
     }
     if (bid.job.clientId !== req.user!.userId && req.user!.role !== 'ADMIN') {
-      res.status(403).json({ error: 'Not authorized' });
+      res.status(403).json({ error: 'Not authorized: You are not the client who posted this job' });
       return;
     }
 
@@ -127,7 +151,8 @@ router.patch('/:id/reject', authenticate, authorize('CLIENT', 'ADMIN'), async (r
       data: { status: 'REJECTED' },
     });
     res.json(updated);
-  } catch {
+  } catch (error) {
+    console.error('Failed to reject bid:', error);
     res.status(500).json({ error: 'Failed to reject bid' });
   }
 });

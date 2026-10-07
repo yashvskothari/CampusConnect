@@ -10,7 +10,6 @@
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:seed": "ts-node prisma/seed.ts",
-    "admin:create": "ts-node prisma/create-admin.ts",
     "db:push": "prisma db push",
     "db:studio": "prisma studio"
   },

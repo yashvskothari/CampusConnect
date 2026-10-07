@@ -14,24 +14,37 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const getInitialUser = (): User | null => {
+  const raw = sessionStorage.getItem('user') || localStorage.getItem('user');
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+};
+
+const getInitialToken = (): string | null => {
+  return sessionStorage.getItem('token') || localStorage.getItem('token');
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
-  });
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
+  const [user, setUser] = useState<User | null>(getInitialUser);
+  const [token, setToken] = useState<string | null>(getInitialToken);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
-      if (token) {
+      const activeToken = sessionStorage.getItem('token') || localStorage.getItem('token');
+      if (activeToken) {
         try {
           const { data } = await authApi.me();
           setUser(data);
-          localStorage.setItem('user', JSON.stringify(data));
+          sessionStorage.setItem('user', JSON.stringify(data));
+          sessionStorage.setItem('token', activeToken);
         } catch {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('user');
           setToken(null);
           setUser(null);
         }
@@ -45,6 +58,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await authApi.login({ email, password });
     setUser(data.user);
     setToken(data.token);
+    // Tab-isolated storage
+    sessionStorage.setItem('user', JSON.stringify(data.user));
+    sessionStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     localStorage.setItem('token', data.token);
   };
@@ -53,6 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await authApi.signup(signupData);
     setUser(data.user);
     setToken(data.token);
+    sessionStorage.setItem('user', JSON.stringify(data.user));
+    sessionStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     localStorage.setItem('token', data.token);
   };
@@ -60,12 +78,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     setToken(null);
+    // Clear tab-specific session so other tabs stay intact
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('token');
   };
 
   const updateUser = (updated: User) => {
     setUser(updated);
+    sessionStorage.setItem('user', JSON.stringify(updated));
     localStorage.setItem('user', JSON.stringify(updated));
   };
 

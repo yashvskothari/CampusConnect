@@ -17,18 +17,7 @@ export function getInitials(name: string) {
 export function getDashboardPath(role: string) {
   switch (role) {
     case 'CLIENT': return '/dashboard/client';
-    case 'ADMIN': return '/admin';
+    case 'ADMIN': return '/dashboard/client';
     default: return '/dashboard/freelancer';
   }
-}
-
-export function formatDateTime(date: string) {
-  return new Date(date).toLocaleString('en-US', {
-    year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
-  });
-}
-
-export function getErrorMessage(err: unknown, fallback = 'Something went wrong') {
-  const e = err as { response?: { data?: { error?: string } } };
-  return e?.response?.data?.error || fallback;
 }

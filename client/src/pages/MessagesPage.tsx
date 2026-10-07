@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { Send } from 'lucide-react';
+import toast from 'react-hot-toast';
 import Card from '../components/Card';
 import Avatar from '../components/Avatar';
 import EmptyState from '../components/EmptyState';
@@ -21,16 +22,49 @@ export default function MessagesPage() {
   const [typing, setTyping] = useState<string | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isTypingRef = useRef(false);
+  const receiverTypingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const startTyping = () => {
+    if (!activeConv || !socketRef.current) return;
+    if (!isTypingRef.current) {
+      isTypingRef.current = true;
+      socketRef.current.emit('typing', { conversationId: activeConv.id, isTyping: true });
+    }
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    typingTimeoutRef.current = setTimeout(() => {
+      stopTyping();
+    }, 4000);
+  };
+
+  const stopTyping = () => {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+    if (isTypingRef.current && activeConv && socketRef.current) {
+      isTypingRef.current = false;
+      socketRef.current.emit('typing', { conversationId: activeConv.id, isTyping: false });
+    }
+  };
 
   useEffect(() => {
     messageApi.getConversations().then(({ data }) => {
       setConversations(data);
       const userId = searchParams.get('user');
       if (userId) {
-        messageApi.createConversation(userId).then(({ data: conv }) => {
-          setActiveConv(conv);
-          setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
-        });
+        messageApi
+          .createConversation(userId)
+          .then(({ data: conv }) => {
+            setActiveConv(conv);
+            setConversations((prev) => [conv, ...prev.filter((c) => c.id !== conv.id)]);
+          })
+          .catch((err) => {
+            toast.error(err.response?.data?.error || 'Unable to open conversation.');
+          });
       }
     }).catch(() => {});
   }, [searchParams]);
@@ -39,7 +73,25 @@ export default function MessagesPage() {
     if (!token) return;
     const socket = io(SOCKET_URL || window.location.origin, { auth: { token } });
     socketRef.current = socket;
-    return () => { socket.disconnect(); };
+
+    const onNotificationMessage = ({ message }: { message: Message }) => {
+      setConversations((prev) => {
+        const found = prev.find((c) => c.id === message.conversationId);
+        if (!found) {
+          messageApi.getConversations().then(({ data }) => setConversations(data)).catch(() => {});
+          return prev;
+        }
+        const updated = { ...found, messages: [message] };
+        return [updated, ...prev.filter((c) => c.id !== message.conversationId)];
+      });
+    };
+
+    socket.on('notification_message', onNotificationMessage);
+
+    return () => {
+      socket.off('notification_message', onNotificationMessage);
+      socket.disconnect();
+    };
   }, [token]);
 
   useEffect(() => {
@@ -50,17 +102,52 @@ export default function MessagesPage() {
 
     const onMessage = (msg: Message) => {
       if (msg.conversationId === activeConv.id) {
-        setMessages((prev) => [...prev, msg]);
+        if (msg.senderId !== user?.id) {
+          if (receiverTypingTimeoutRef.current) {
+            clearTimeout(receiverTypingTimeoutRef.current);
+            receiverTypingTimeoutRef.current = null;
+          }
+          setTyping(null);
+        }
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === msg.id)) return prev;
+          return [...prev, msg];
+        });
+        setConversations((prev) => {
+          const found = prev.find((c) => c.id === msg.conversationId);
+          if (!found) return prev;
+          const updated = { ...found, messages: [msg] };
+          return [updated, ...prev.filter((c) => c.id !== msg.conversationId)];
+        });
       }
     };
     const onTyping = ({ userId, isTyping }: { userId: string; isTyping: boolean }) => {
-      if (userId !== user?.id) setTyping(isTyping ? 'typing...' : null);
+      if (userId !== user?.id) {
+        if (receiverTypingTimeoutRef.current) {
+          clearTimeout(receiverTypingTimeoutRef.current);
+          receiverTypingTimeoutRef.current = null;
+        }
+        if (isTyping) {
+          const other = getOtherParticipant(activeConv);
+          setTyping(other ? `${other.name} is typing...` : 'typing...');
+          receiverTypingTimeoutRef.current = setTimeout(() => {
+            setTyping(null);
+          }, 4000);
+        } else {
+          setTyping(null);
+        }
+      }
     };
 
     socketRef.current.on('new_message', onMessage);
     socketRef.current.on('typing', onTyping);
 
     return () => {
+      stopTyping();
+      if (receiverTypingTimeoutRef.current) {
+        clearTimeout(receiverTypingTimeoutRef.current);
+      }
+      setTyping(null);
       socketRef.current?.off('new_message', onMessage);
       socketRef.current?.off('typing', onTyping);
       socketRef.current?.emit('leave_conversation', activeConv.id);
@@ -69,19 +156,14 @@ export default function MessagesPage() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, typing]);
 
   const sendMessage = () => {
     if (!text.trim() || !activeConv || !socketRef.current) return;
-    socketRef.current.emit('send_message', { conversationId: activeConv.id, text: text.trim() });
+    const messageText = text.trim();
+    stopTyping();
     setText('');
-  };
-
-  const handleTyping = (value: string) => {
-    setText(value);
-    if (activeConv && socketRef.current) {
-      socketRef.current.emit('typing', { conversationId: activeConv.id, isTyping: value.length > 0 });
-    }
+    socketRef.current.emit('send_message', { conversationId: activeConv.id, text: messageText });
   };
 
   const getOtherParticipant = (conv: Conversation) =>
@@ -129,12 +211,24 @@ export default function MessagesPage() {
                     </div>
                   </div>
                 ))}
+                {typing && (
+                  <div className="flex justify-start">
+                    <div className="rounded-xl bg-surface-200 border border-surface-300 px-3 py-1.5 text-xs text-primary-400 italic animate-pulse">
+                      {typing}
+                    </div>
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
               <div className="border-t border-surface-300 p-4 flex gap-2">
                 <input
                   value={text}
-                  onChange={(e) => handleTyping(e.target.value)}
+                  onFocus={startTyping}
+                  onBlur={stopTyping}
+                  onChange={(e) => {
+                    setText(e.target.value);
+                    startTyping();
+                  }}
                   onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                   placeholder="Type a message..."
                   className="flex-1 rounded-lg border border-surface-400 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none"

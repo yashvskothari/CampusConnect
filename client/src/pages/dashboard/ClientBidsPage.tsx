@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Check, Clock3, IndianRupee, UserRound } from 'lucide-react';
+import { Check, Clock3, IndianRupee, UserRound, MessageSquare } from 'lucide-react';
 
 import Card from '../../components/Card';
 import Badge from '../../components/Badge';
 import Button from '../../components/Button';
 import EmptyState from '../../components/EmptyState';
 import { SkeletonCard } from '../../components/Skeleton';
+import ChatModal from '../../components/chat/ChatModal';
 
 import { useAuth } from '../../context/AuthContext';
 import { jobApi, bidApi } from '../../services';
@@ -21,6 +22,7 @@ export default function ClientBidsPage() {
   const [bids, setBids] = useState<Bid[]>([]);
   const [loading, setLoading] = useState(true);
   const [acceptingBid, setAcceptingBid] = useState<string | null>(null);
+  const [activeChatUser, setActiveChatUser] = useState<{ id: string; name: string; avatar?: string } | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -64,8 +66,18 @@ export default function ClientBidsPage() {
             : bid
         )
       );
-    } catch {
-      toast.error('Failed to accept bid');
+    } catch (err: unknown) {
+      const error = err as {
+        response?: {
+          data?: {
+            error?: string;
+          };
+        };
+      };
+
+      toast.error(
+        error.response?.data?.error || 'Failed to accept bid'
+      );
     } finally {
       setAcceptingBid(null);
     }
@@ -281,17 +293,36 @@ export default function ClientBidsPage() {
 
                 {/* ================= ACTION ================= */}
 
-                {bid.status === 'PENDING' && (
-                  <div
-                    className="
-                      shrink-0
-                      border-t border-white/6
-                      pt-4
-                      lg:border-t-0
-                      lg:pl-5
-                      lg:pt-0
-                    "
-                  >
+                <div
+                  className="
+                    shrink-0
+                    flex flex-wrap items-center gap-2
+                    border-t border-white/6
+                    pt-4
+                    lg:border-t-0
+                    lg:pl-5
+                    lg:pt-0
+                  "
+                >
+                  {bid.freelancer && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setActiveChatUser({
+                          id: bid.freelancer!.id,
+                          name: bid.freelancer!.name,
+                          avatar: bid.freelancer!.avatar,
+                        });
+                      }}
+                      className="w-full sm:w-auto"
+                    >
+                      <MessageSquare className="mr-1.5 h-3.5 w-3.5" />
+                      Chat
+                    </Button>
+                  )}
+
+                  {bid.status === 'PENDING' && (
                     <Button
                       size="sm"
                       onClick={() => handleAccept(bid.id)}
@@ -307,31 +338,41 @@ export default function ClientBidsPage() {
                         ? 'Accepting...'
                         : 'Accept Bid'}
                     </Button>
-                  </div>
-                )}
+                  )}
 
-                {bid.status === 'ACCEPTED' && (
-                  <div
-                    className="
-                      flex shrink-0
-                      items-center gap-2
-                      rounded-lg
-                      border border-primary-500/15
-                      bg-primary-500/6
-                      px-3 py-2
-                      text-sm
-                      font-medium
-                      text-primary-400
-                    "
-                  >
-                    <Check className="h-4 w-4" />
-                    Accepted
-                  </div>
-                )}
+                  {bid.status === 'ACCEPTED' && (
+                    <div
+                      className="
+                        flex shrink-0
+                        items-center gap-2
+                        rounded-lg
+                        border border-primary-500/15
+                        bg-primary-500/6
+                        px-3 py-2
+                        text-sm
+                        font-medium
+                        text-primary-400
+                      "
+                    >
+                      <Check className="h-4 w-4" />
+                      Accepted
+                    </div>
+                  )}
+                </div>
               </div>
             </Card>
           ))}
         </div>
+      )}
+
+      {activeChatUser && (
+        <ChatModal
+          isOpen={Boolean(activeChatUser)}
+          targetUserId={activeChatUser.id}
+          targetUserName={activeChatUser.name}
+          targetUserAvatar={activeChatUser.avatar}
+          onClose={() => setActiveChatUser(null)}
+        />
       )}
     </div>
   );

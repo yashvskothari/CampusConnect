@@ -17,12 +17,13 @@ const schema = z.object({
   description: z
     .string()
     .min(20, 'Description must be at least 20 characters'),
-  budget: z.number().min(1, 'Budget must be at least $1'),
+  budget: z.coerce.number().min(1, 'Budget must be at least $1'),
   deadline: z.string().min(1, 'Deadline is required'),
   category: z.string().min(1, 'Category is required'),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormInput = z.input<typeof schema>;
+type FormOutput = z.output<typeof schema>;
 
 export default function PostJobPage() {
   const navigate = useNavigate();
@@ -64,8 +65,15 @@ export default function PostJobPage() {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<FormInput, any, FormOutput>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      title: '',
+      description: '',
+      budget: undefined,
+      deadline: '',
+      category: '',
+    },
   });
 
   const selectedCategory = watch('category');
@@ -78,7 +86,7 @@ export default function PostJobPage() {
     setCategoryOpen(false);
   };
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: FormOutput) => {
     setLoading(true);
 
     try {
@@ -100,6 +108,21 @@ export default function PostJobPage() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onError = (formErrors: typeof errors) => {
+    const firstErrorMessage =
+      formErrors.title?.message ||
+      formErrors.description?.message ||
+      formErrors.budget?.message ||
+      formErrors.deadline?.message ||
+      formErrors.category?.message;
+
+    if (firstErrorMessage) {
+      toast.error(firstErrorMessage);
+    } else {
+      toast.error('Please complete all required fields correctly.');
     }
   };
 
@@ -137,7 +160,7 @@ export default function PostJobPage() {
           "
         >
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit, onError)}
             className="space-y-7"
           >
             {/* ================= JOB TITLE ================= */}
@@ -214,7 +237,7 @@ export default function PostJobPage() {
                 </div>
 
                 <Input
-                  label=""
+                  id="budget"
                   type="number"
                   step="0.01"
                   min="1"
@@ -236,8 +259,9 @@ export default function PostJobPage() {
                 </div>
 
                 <Input
-                  label=""
+                  id="deadline"
                   type="date"
+                  min={new Date().toISOString().split('T')[0]}
                   error={errors.deadline?.message}
                   {...register('deadline')}
                 />

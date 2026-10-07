@@ -13,7 +13,6 @@ import messageRoutes from './routes/message.routes';
 import reviewRoutes from './routes/review.routes';
 import paymentRoutes from './routes/payment.routes';
 import recommendationRoutes from './routes/recommendation.routes';
-import adminRoutes from './routes/admin.routes';
 import { setupSocket } from './socket';
 
 dotenv.config();
@@ -47,14 +46,13 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/recommendations', recommendationRoutes);
-app.use('/api/admin', adminRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
 const httpServer = http.createServer(app);
-setupSocket(httpServer);
+setupSocket(httpServer); // Real-time chat & presence engine
 
 httpServer.listen(PORT, () => {
   console.log(`Gigverse server running on port ${PORT}`);

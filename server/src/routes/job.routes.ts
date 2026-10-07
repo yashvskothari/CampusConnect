@@ -79,7 +79,8 @@ router.post('/', authenticate, authorize('CLIENT', 'ADMIN'), async (req: Request
       },
     });
     res.status(201).json(job);
-  } catch {
+  } catch (error) {
+    console.error('Failed to create job:', error);
     res.status(500).json({ error: 'Failed to create job' });
   }
 });

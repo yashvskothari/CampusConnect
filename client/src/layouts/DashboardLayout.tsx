@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, User, DollarSign, Star, Sparkles, Plus, Users, ClipboardList, ScrollText, Layers } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, User, DollarSign, Star, Sparkles, Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../utils';
 
@@ -9,7 +9,7 @@ interface SidebarLink {
   icon: React.ReactNode;
 }
 
-export default function DashboardLayout({ links, mobileNav }: { links: SidebarLink[]; mobileNav?: boolean }) {
+export default function DashboardLayout({ links }: { links: SidebarLink[] }) {
   const location = useLocation();
   const { user } = useAuth();
 
@@ -44,25 +44,6 @@ export default function DashboardLayout({ links, mobileNav }: { links: SidebarLi
             </div>
           </aside>
           <div className="flex-1 min-w-0">
-            {mobileNav && (
-              <nav className="lg:hidden -mx-4 mb-6 flex gap-2 overflow-x-auto px-4 pb-2">
-                {links.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className={cn(
-                      'flex shrink-0 items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium',
-                      location.pathname === link.to
-                        ? 'border-primary-500/40 bg-primary-500/10 text-primary-400'
-                        : 'border-surface-300 text-surface-800'
-                    )}
-                  >
-                    {link.icon}
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-            )}
             <Outlet />
           </div>
         </div>
@@ -87,14 +68,4 @@ export const clientLinks: SidebarLink[] = [
   { to: '/dashboard/client/payments', label: 'Payments', icon: <Star className="h-4 w-4" /> },
   { to: '/messages', label: 'Messages', icon: <MessageSquare className="h-4 w-4" /> },
   { to: '/profile', label: 'Profile', icon: <User className="h-4 w-4" /> },
-];
-
-export const adminLinks: SidebarLink[] = [
-  { to: '/admin', label: 'Overview', icon: <LayoutDashboard className="h-4 w-4" /> },
-  { to: '/admin/users', label: 'Users', icon: <Users className="h-4 w-4" /> },
-  { to: '/admin/jobs', label: 'Jobs', icon: <ClipboardList className="h-4 w-4" /> },
-  { to: '/admin/services', label: 'Services', icon: <Layers className="h-4 w-4" /> },
-  { to: '/admin/reviews', label: 'Reviews', icon: <Star className="h-4 w-4" /> },
-  { to: '/admin/payments', label: 'Payments', icon: <DollarSign className="h-4 w-4" /> },
-  { to: '/admin/audit-log', label: 'Audit Log', icon: <ScrollText className="h-4 w-4" /> },
 ];

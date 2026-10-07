@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { Sparkles, Clock } from 'lucide-react';
+import { Sparkles, Clock, MessageSquare } from 'lucide-react';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Avatar from '../components/Avatar';
 import Rating from '../components/Rating';
+import ChatModal from '../components/chat/ChatModal';
 import { jobApi, bidApi, recommendationApi } from '../services';
 import { useAuth } from '../context/AuthContext';
 import { formatCurrency, formatDate } from '../utils';
@@ -21,7 +22,23 @@ export default function JobDetailPage() {
   const [suggestion, setSuggestion] = useState<BidSuggestion | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const { register, handleSubmit, setValue } = useForm();
+  const [activeChatUser, setActiveChatUser] = useState<{ id: string; name: string; avatar?: string } | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<{
+    proposal: string;
+    quote: number | string;
+    deliveryDays: number | string;
+  }>({
+    defaultValues: {
+      proposal: '',
+      quote: '',
+      deliveryDays: '',
+    },
+  });
 
   useEffect(() => {
     if (!id) return;
@@ -32,18 +49,46 @@ export default function JobDetailPage() {
     if (id && user?.role === 'FREELANCER') {
       recommendationApi.getBidSuggestion(id).then(({ data }) => {
         setSuggestion(data);
-        setValue('quote', data.suggestedQuote);
-        setValue('deliveryDays', data.suggestedDeliveryDays);
-        setValue('proposal', data.proposalTemplate);
+        reset({
+          quote: data.suggestedQuote,
+          deliveryDays: data.suggestedDeliveryDays,
+          proposal: data.proposalTemplate,
+        });
       }).catch(() => {});
     }
-  }, [id, user, setValue]);
+  }, [id, user, reset]);
 
-  const onSubmit = async (data: Record<string, string>) => {
+  const onSubmit = async (data: {
+    proposal: string;
+    quote: number | string;
+    deliveryDays: number | string;
+  }) => {
     if (!id) return;
+    const cleanProposal = data.proposal?.trim();
+    const numQuote = parseFloat(String(data.quote));
+    const numDays = Math.round(Number(data.deliveryDays));
+
+    if (!cleanProposal) {
+      toast.error('Please enter a proposal');
+      return;
+    }
+    if (isNaN(numQuote) || numQuote <= 0) {
+      toast.error('Quote must be a positive number');
+      return;
+    }
+    if (isNaN(numDays) || numDays <= 0) {
+      toast.error('Delivery days must be at least 1 day');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      await bidApi.create({ jobId: id, proposal: data.proposal, quote: Number(data.quote), deliveryDays: Number(data.deliveryDays) });
+      await bidApi.create({
+        jobId: id,
+        proposal: cleanProposal,
+        quote: numQuote,
+        deliveryDays: numDays,
+      });
       toast.success('Bid submitted successfully!');
       const { data: updated } = await jobApi.getById(id);
       setJob(updated);
@@ -53,6 +98,10 @@ export default function JobDetailPage() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const onInvalid = () => {
+    toast.error('Please fill in all required fields to submit your bid.');
   };
 
   if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" /></div>;
@@ -76,12 +125,32 @@ export default function JobDetailPage() {
               <div className="flex items-center gap-1"><Clock className="h-4 w-4 text-surface-600" /><span className="text-surface-700">Deadline:</span> {formatDate(job.deadline)}</div>
             </div>
             {job.client && (
-              <div className="mt-6 flex items-center gap-3 border-t border-surface-300 pt-4">
-                <Avatar name={job.client.name} src={job.client.avatar} />
-                <div>
-                  <Link to={`/users/${job.client.id}`} className="font-medium text-surface-900 hover:text-primary-400">{job.client.name}</Link>
-                  <Rating rating={job.client.rating} size={14} showValue />
+              <div className="mt-6 flex items-center justify-between border-t border-surface-300 pt-4">
+                <div className="flex items-center gap-3">
+                  <Avatar name={job.client.name} src={job.client.avatar} />
+                  <div>
+                    <Link to={`/users/${job.client.id}`} className="font-medium text-surface-900 hover:text-primary-400">{job.client.name}</Link>
+                    <Rating rating={job.client.rating} size={14} showValue />
+                  </div>
                 </div>
+                {user?.role === 'FREELANCER' && hasBid && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      if (job.client) {
+                        setActiveChatUser({
+                          id: job.client.id,
+                          name: job.client.name,
+                          avatar: job.client.avatar,
+                        });
+                      }
+                    }}
+                  >
+                    <MessageSquare className="h-3.5 w-3.5 mr-1" />
+                    Message Client
+                  </Button>
+                )}
               </div>
             )}
           </Card>
@@ -107,22 +176,50 @@ export default function JobDetailPage() {
                       <span className="font-semibold text-primary-400">{formatCurrency(bid.quote)}</span>
                       <span>{bid.deliveryDays} days delivery</span>
                     </div>
-                    {bid.status === 'PENDING' && (
-                      <div className="mt-3 flex gap-2">
-                        <Button size="sm" onClick={async () => {
-                          await bidApi.accept(bid.id);
-                          toast.success('Bid accepted!');
-                          const { data } = await jobApi.getById(id!);
-                          setJob(data);
-                        }}>Accept</Button>
-                        <Button size="sm" variant="outline" onClick={async () => {
-                          await bidApi.reject(bid.id);
-                          toast.success('Bid rejected');
-                          const { data } = await jobApi.getById(id!);
-                          setJob(data);
-                        }}>Reject</Button>
-                      </div>
-                    )}
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {bid.freelancer && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setActiveChatUser({
+                              id: bid.freelancer!.id,
+                              name: bid.freelancer!.name,
+                              avatar: bid.freelancer!.avatar,
+                            });
+                          }}
+                        >
+                          <MessageSquare className="h-3.5 w-3.5 mr-1" />
+                          Chat
+                        </Button>
+                      )}
+                      {bid.status === 'PENDING' && (
+                        <>
+                          <Button size="sm" onClick={async () => {
+                            try {
+                              await bidApi.accept(bid.id);
+                              toast.success('Bid accepted! Payment initiated.');
+                              const { data } = await jobApi.getById(id!);
+                              setJob(data);
+                            } catch (err: unknown) {
+                              const error = err as { response?: { data?: { error?: string } } };
+                              toast.error(error.response?.data?.error || 'Failed to accept bid');
+                            }
+                          }}>Accept</Button>
+                          <Button size="sm" variant="outline" onClick={async () => {
+                            try {
+                              await bidApi.reject(bid.id);
+                              toast.success('Bid rejected');
+                              const { data } = await jobApi.getById(id!);
+                              setJob(data);
+                            } catch (err: unknown) {
+                              const error = err as { response?: { data?: { error?: string } } };
+                              toast.error(error.response?.data?.error || 'Failed to reject bid');
+                            }
+                          }}>Reject</Button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -133,29 +230,125 @@ export default function JobDetailPage() {
         <div>
           {user?.role === 'FREELANCER' && job.status === 'OPEN' && !hasBid && (
             <Card>
-              <h2 className="text-lg font-semibold mb-4">Submit Your Bid</h2>
+              <h2 className="text-lg font-semibold mb-4 text-surface-900">Submit Your Bid</h2>
               {suggestion && (
-                <div className="mb-4 p-3 bg-teal-50 rounded-lg border border-teal-100">
-                  <div className="flex items-center gap-2 text-teal-700 text-sm font-medium mb-2">
-                    <Sparkles className="h-4 w-4" /> AI Bid Assistant
+                <div className="mb-4 p-3 bg-teal-500/10 rounded-lg border border-teal-500/20">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2 text-teal-400 text-sm font-medium">
+                      <Sparkles className="h-4 w-4" /> AI Bid Assistant
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        reset({
+                          quote: suggestion.suggestedQuote,
+                          deliveryDays: suggestion.suggestedDeliveryDays,
+                          proposal: suggestion.proposalTemplate,
+                        });
+                        toast.success('Applied AI suggestion!');
+                      }}
+                      className="text-xs text-primary-400 hover:underline font-medium cursor-pointer"
+                    >
+                      Apply Suggestion
+                    </button>
                   </div>
-                  <p className="text-xs text-teal-600">Suggested: {formatCurrency(suggestion.suggestedQuote)} in {suggestion.suggestedDeliveryDays} days</p>
+                  <p className="text-xs text-teal-300">
+                    Suggested: {formatCurrency(suggestion.suggestedQuote)} in {suggestion.suggestedDeliveryDays} days
+                  </p>
                 </div>
               )}
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-surface-800 mb-1">Proposal</label>
-                  <textarea {...register('proposal', { required: true })} rows={6} className="w-full rounded-lg border border-surface-400 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500" />
+                  <textarea
+                    {...register('proposal', {
+                      required: 'Proposal is required',
+                      minLength: { value: 10, message: 'Proposal should be at least 10 characters' },
+                    })}
+                    rows={6}
+                    placeholder="Describe how you will complete this job, your approach, and timeline..."
+                    className="w-full rounded-lg border border-surface-400 bg-surface-200 px-3 py-2 text-sm text-surface-900 placeholder:text-surface-600 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  />
+                  {errors.proposal && <p className="mt-1 text-xs text-red-500">{errors.proposal.message}</p>}
                 </div>
-                <Input label="Your Quote ($)" type="number" step="0.01" {...register('quote', { required: true })} />
-                <Input label="Delivery Days" type="number" {...register('deliveryDays', { required: true })} />
+                <Input
+                  id="bid-quote"
+                  label="Your Quote ($)"
+                  type="number"
+                  step="0.01"
+                  min="1"
+                  placeholder="e.g. 150"
+                  error={errors.quote?.message}
+                  {...register('quote', {
+                    required: 'Quote is required',
+                    min: { value: 1, message: 'Quote must be at least $1' },
+                  })}
+                />
+                <Input
+                  id="bid-delivery-days"
+                  label="Delivery Days"
+                  type="number"
+                  min="1"
+                  placeholder="e.g. 7"
+                  error={errors.deliveryDays?.message}
+                  {...register('deliveryDays', {
+                    required: 'Delivery days is required',
+                    min: { value: 1, message: 'Delivery days must be at least 1' },
+                  })}
+                />
                 <Button type="submit" className="w-full" loading={submitting}>Submit Bid</Button>
               </form>
             </Card>
           )}
-          {hasBid && <Card><p className="text-sm text-green-600 font-medium">You have already submitted a bid for this job.</p></Card>}
+
+          {hasBid && (
+            <Card>
+              <h2 className="text-lg font-semibold mb-2 text-surface-900">Bid Submitted</h2>
+              <p className="text-sm text-emerald-400 font-medium">You have already submitted a bid for this job.</p>
+            </Card>
+          )}
+
+          {user?.role === 'CLIENT' && (
+            <Card>
+              <h2 className="text-lg font-semibold mb-2 text-surface-900">Client Account</h2>
+              <p className="text-sm text-surface-700">
+                You are logged in as a <strong>Client</strong>. Only registered <strong>Freelancers</strong> can submit proposals on jobs.
+              </p>
+            </Card>
+          )}
+
+          {!user && (
+            <Card>
+              <h2 className="text-lg font-semibold mb-2 text-surface-900">Submit a Proposal</h2>
+              <p className="text-sm text-surface-700 mb-4">
+                Log in or create a Freelancer account to bid on this job.
+              </p>
+              <Link to="/login">
+                <Button size="sm" className="w-full">Log In to Bid</Button>
+              </Link>
+            </Card>
+          )}
+
+          {user?.role === 'FREELANCER' && job.status !== 'OPEN' && !hasBid && (
+            <Card>
+              <h2 className="text-lg font-semibold mb-2 text-surface-900">Job Closed</h2>
+              <p className="text-sm text-surface-700">
+                This job is currently <strong>{job.status.toLowerCase().replace('_', ' ')}</strong> and is no longer accepting bids.
+              </p>
+            </Card>
+          )}
         </div>
       </div>
+
+      {activeChatUser && (
+        <ChatModal
+          isOpen={Boolean(activeChatUser)}
+          targetUserId={activeChatUser.id}
+          targetUserName={activeChatUser.name}
+          targetUserAvatar={activeChatUser.avatar}
+          onClose={() => setActiveChatUser(null)}
+        />
+      )}
     </div>
   );
 }

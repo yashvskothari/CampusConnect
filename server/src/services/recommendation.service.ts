@@ -18,14 +18,19 @@ export interface JobMatch {
 }
 
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  'Web Development': ['javascript', 'react', 'html', 'css', 'node', 'typescript', 'web'],
+  'Web Development': ['javascript', 'react', 'html', 'css', 'node', 'typescript', 'web', 'frontend', 'backend'],
+  'Software Development': ['software', 'python', 'java', 'c++', 'c#', 'backend', 'api', 'git', 'full stack', 'developer', 'algorithm'],
+  'Data Analyst': ['data', 'analyst', 'analytics', 'sql', 'python', 'tableau', 'power bi', 'excel', 'statistics', 'r', 'pandas'],
+  'Mobile Development': ['mobile', 'android', 'ios', 'flutter', 'react native', 'swift', 'kotlin'],
+  'AI & Machine Learning': ['ai', 'machine learning', 'deep learning', 'nlp', 'pytorch', 'tensorflow', 'llm', 'data science'],
+  'Cloud & DevOps': ['cloud', 'devops', 'aws', 'azure', 'gcp', 'docker', 'kubernetes', 'linux', 'ci/cd'],
+  'UI/UX Design': ['ui', 'ux', 'figma', 'wireframe', 'prototype', 'user experience', 'user interface'],
   'Graphic Design': ['design', 'photoshop', 'illustrator', 'figma', 'ui', 'ux', 'graphic'],
   'Writing': ['writing', 'content', 'copywriting', 'blog', 'seo', 'article'],
   'Tutoring': ['tutoring', 'teaching', 'math', 'science', 'education', 'tutor'],
   'Video Editing': ['video', 'editing', 'premiere', 'after effects', 'motion'],
   'Data Entry': ['data', 'excel', 'spreadsheet', 'typing', 'entry'],
   'Marketing': ['marketing', 'social media', 'ads', 'campaign', 'branding'],
-  'Mobile Development': ['mobile', 'android', 'ios', 'flutter', 'react native'],
 };
 
 function skillOverlap(userSkills: string[], category: string): number {

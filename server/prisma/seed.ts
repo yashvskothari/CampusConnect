@@ -14,14 +14,14 @@ async function main() {
   await prisma.job.deleteMany();
   await prisma.service.deleteMany();
 
-  const password = await bcrypt.hash('password@123', 10);
+  const password = await bcrypt.hash('password123', 10);
 
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@gigverse.com' },
+    where: { email: 'admin@campusconnect.com' },
     update: {},
     create: {
       name: 'Admin User',
-      email: 'admin@gigverse.com',
+      email: 'admin@campusconnect.com',
       password,
       role: Role.ADMIN,
       bio: 'Platform administrator',
@@ -30,11 +30,11 @@ async function main() {
   });
 
   const client1 = await prisma.user.upsert({
-    where: { email: 'client@gigverse.com' },
+    where: { email: 'client@campusconnect.com' },
     update: {},
     create: {
       name: 'Sarah Johnson',
-      email: 'client@gigverse.com',
+      email: 'client@campusconnect.com',
       password,
       role: Role.CLIENT,
       bio: 'Startup founder looking for talented student freelancers',
@@ -44,11 +44,11 @@ async function main() {
   });
 
   const client2 = await prisma.user.upsert({
-    where: { email: 'client2@gigverse.com' },
+    where: { email: 'client2@campusconnect.com' },
     update: {},
     create: {
       name: 'Mike Chen',
-      email: 'client2@gigverse.com',
+      email: 'client2@campusconnect.com',
       password,
       role: Role.CLIENT,
       bio: 'Marketing director at a growing SaaS company',
@@ -58,11 +58,11 @@ async function main() {
   });
 
   const freelancer1 = await prisma.user.upsert({
-    where: { email: 'freelancer@gigverse.com' },
+    where: { email: 'freelancer@campusconnect.com' },
     update: {},
     create: {
       name: 'Alex Rivera',
-      email: 'freelancer@gigverse.com',
+      email: 'freelancer@campusconnect.com',
       password,
       role: Role.FREELANCER,
       bio: 'Computer Science student specializing in web development',
@@ -72,11 +72,11 @@ async function main() {
   });
 
   const freelancer2 = await prisma.user.upsert({
-    where: { email: 'designer@gigverse.com' },
+    where: { email: 'designer@campusconnect.com' },
     update: {},
     create: {
       name: 'Emma Wilson',
-      email: 'designer@gigverse.com',
+      email: 'designer@campusconnect.com',
       password,
       role: Role.FREELANCER,
       bio: 'Graphic design student with a passion for UI/UX',
@@ -86,11 +86,11 @@ async function main() {
   });
 
   const freelancer3 = await prisma.user.upsert({
-    where: { email: 'writer@gigverse.com' },
+    where: { email: 'writer@campusconnect.com' },
     update: {},
     create: {
       name: 'James Park',
-      email: 'writer@gigverse.com',
+      email: 'writer@campusconnect.com',
       password,
       role: Role.FREELANCER,
       bio: 'English major offering content writing and copywriting services',
@@ -191,10 +191,10 @@ async function main() {
   });
 
   console.log('Seed completed!');
-  console.log('Demo accounts (password: password@123):');
-  console.log('  Admin: admin@gigverse.com');
-  console.log('  Client: client@gigverse.com');
-  console.log('  Freelancer: freelancer@gigverse.com');
+  console.log('Demo accounts (password: password123):');
+  console.log('  Admin: admin@campusconnect.com');
+  console.log('  Client: client@campusconnect.com');
+  console.log('  Freelancer: freelancer@campusconnect.com');
 }
 
 main()

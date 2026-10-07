@@ -1,15 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { Role } from '@prisma/client';
-import { verifyToken } from '../utils/jwt';
 import prisma from '../utils/prisma';
+import { verifyToken } from '../utils/jwt';
 
-/**
- * Verifies the JWT, then re-checks the user in the database so that
- *  - deleted users can no longer use an old token,
- *  - suspended users are locked out immediately,
- *  - role changes (e.g. an admin being demoted) apply straight away
- *    instead of waiting for the token to expire.
- */
 export const authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
@@ -17,34 +10,28 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     return;
   }
 
-  let decoded;
   try {
-    decoded = verifyToken(authHeader.split(' ')[1]);
-  } catch {
-    res.status(401).json({ error: 'Invalid or expired token' });
-    return;
-  }
+    const token = authHeader.split(' ')[1];
+    const decoded = verifyToken(token);
 
-  try {
-    const user = await prisma.user.findUnique({
+    const dbUser = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, email: true, role: true, status: true },
+      select: { id: true, email: true, role: true },
     });
 
-    if (!user) {
-      res.status(401).json({ error: 'Account no longer exists' });
-      return;
-    }
-    if (user.status === 'SUSPENDED') {
-      res.status(403).json({ error: 'Your account has been suspended', code: 'ACCOUNT_SUSPENDED' });
+    if (!dbUser) {
+      res.status(401).json({ error: 'User account not found or deactivated' });
       return;
     }
 
-    req.user = { userId: user.id, email: user.email, role: user.role as Role };
+    req.user = {
+      userId: dbUser.id,
+      email: dbUser.email,
+      role: dbUser.role,
+    };
     next();
-  } catch (error) {
-    console.error('Auth middleware error:', error instanceof Error ? error.message : 'Unknown error');
-    res.status(500).json({ error: 'Authentication failed' });
+  } catch {
+    res.status(401).json({ error: 'Invalid or expired token' });
   }
 };
 
@@ -54,8 +41,14 @@ export const authorize = (...roles: Role[]) => {
       res.status(401).json({ error: 'Authentication required' });
       return;
     }
-    if (!roles.includes(req.user.role)) {
-      res.status(403).json({ error: 'Insufficient permissions' });
+
+    const userRoleUpper = req.user.role?.toUpperCase();
+    const allowedRolesUpper = roles.map((r) => r.toUpperCase());
+
+    if (!allowedRolesUpper.includes(userRoleUpper)) {
+      res.status(403).json({
+        error: `Insufficient permissions: You are currently signed in as a ${req.user.role}, but this action requires a ${roles.join(' or ')} account.`,
+      });
       return;
     }
     next();

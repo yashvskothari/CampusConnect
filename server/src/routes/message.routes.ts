@@ -5,6 +5,7 @@ import fs from 'fs';
 import prisma from '../utils/prisma';
 import { authenticate } from '../middleware/auth.middleware';
 import { getParam } from '../utils/params';
+import { canUsersChat } from '../utils/chatAuth';
 
 const uploadDir = path.join(__dirname, '../../uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -28,6 +29,7 @@ router.get('/conversations', authenticate, async (req: Request, res: Response) =
     const conversations = await prisma.conversation.findMany({
       where: {
         participants: { some: { userId: req.user!.userId } },
+        messages: { some: {} },
       },
       include: {
         participants: {
@@ -55,6 +57,14 @@ router.post('/conversations', authenticate, async (req: Request, res: Response) 
       return;
     }
 
+    const allowed = await canUsersChat(req.user!.userId, participantId);
+    if (!allowed) {
+      res.status(403).json({
+        error: 'Chat is restricted to freelancers and clients who share an active proposal, job, or contract.',
+      });
+      return;
+    }
+
     const existing = await prisma.conversation.findFirst({
       where: {
         AND: [
@@ -64,7 +74,13 @@ router.post('/conversations', authenticate, async (req: Request, res: Response) 
       },
       include: {
         participants: { include: { user: { select: { id: true, name: true, avatar: true } } } },
+        messages: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          include: { sender: { select: { id: true, name: true } } },
+        },
       },
+      orderBy: { createdAt: 'asc' },
     });
 
     if (existing) {
@@ -83,6 +99,11 @@ router.post('/conversations', authenticate, async (req: Request, res: Response) 
       },
       include: {
         participants: { include: { user: { select: { id: true, name: true, avatar: true } } } },
+        messages: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          include: { sender: { select: { id: true, name: true } } },
+        },
       },
     });
     res.status(201).json(conversation);

@@ -31,7 +31,7 @@ export default function Navbar() {
           <Link to="/" className="flex items-center gap-2.5">
             <div className="flex h-15 w-15 items-center justify-center rounded-lg overflow-hidden">
               <img
-                src="/favicon.png"
+                src="favicon.png"
                 alt="GigVerse"
                 className="h-full w-full object-cover"
               />
@@ -72,9 +72,14 @@ export default function Navbar() {
                   className="flex items-center gap-2 rounded-lg px-3 py-1.5 hover:bg-surface-200"
                 >
                   <Avatar name={user.name} src={user.avatar} size="sm" />
-                  <span className="text-sm font-medium text-surface-900">
-                    {user.name}
-                  </span>
+                  <div className="flex flex-col text-left">
+                    <span className="text-sm font-medium text-surface-900 leading-tight">
+                      {user.name}
+                    </span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-400">
+                      {user.role}
+                    </span>
+                  </div>
                 </Link>
                 <button
                   onClick={() => setShowLogoutConfirm(true)}
