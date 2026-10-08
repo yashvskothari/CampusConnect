@@ -33,17 +33,17 @@ export default function AboutUsPage() {
 
             {/* Heading */}
             <h1 className="text-4xl font-bold tracking-tight text-surface-900 sm:text-5xl lg:text-6xl">
-              Where students turn
+              Where talent meets
               <span className="block text-primary-400">
-                skills into opportunities.
+                opportunity.
               </span>
             </h1>
 
             {/* Description */}
             <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-surface-700 sm:text-lg sm:leading-8">
-              GigVerse is a freelance marketplace built specifically for
-              students — helping talented students find meaningful work
-              while giving clients access to affordable, quality talent.
+              GigVerse is a freelance marketplace connecting clients with skilled
+              student talent — making it easier to find the right people,
+              discover meaningful work, and turn ideas into results.
             </p>
 
             {/* CTA */}
@@ -104,28 +104,29 @@ export default function AboutUsPage() {
               </div>
 
               <h2 className="mt-3 text-3xl font-bold tracking-tight text-surface-900 sm:text-4xl">
-                Built around the student experience.
+                Built for both sides of the opportunity.
               </h2>
             </div>
 
             {/* Right */}
             <div className="space-y-5 text-sm leading-7 text-surface-700 sm:text-base">
               <p>
-                Students have skills worth sharing long before they
-                graduate. GigVerse creates a space where those skills can
-                become practical experience, freelance work, and
-                opportunities.
+                Great work starts with the right connection. GigVerse gives student
+                freelancers a place to showcase what they can do while giving
+                clients a simpler way to discover emerging talent.
               </p>
 
               <p>
-                At the same time, clients can discover talented students
-                who can take on projects at an affordable cost while
-                building their own professional experience.
+                For clients, that means access to capable, motivated talent for
+                projects of different sizes. For freelancers, it means
+                opportunities to apply their skills, build credibility, and
+                gain real-world experience.
               </p>
 
               <p>
-                The goal is simple: create a marketplace where learning,
-                earning, and real-world experience can happen together.
+                The goal is simple: make it easier for the right talent and the right
+                opportunity to find each other — and make the work that follows
+                straightforward for everyone.
               </p>
             </div>
           </div>
@@ -144,12 +145,13 @@ export default function AboutUsPage() {
             </div>
 
             <h2 className="text-3xl font-bold tracking-tight text-surface-900 sm:text-4xl">
-              Everyone brings something to the table.
+              Two sides. One shared goal.
             </h2>
 
             <p className="mt-4 text-sm leading-6 text-surface-700 sm:text-base">
-              GigVerse connects students and clients through a simple
-              marketplace designed around their needs.
+              GigVerse brings clients and student freelancers together through a
+              straightforward marketplace designed to make finding, hiring,
+              and working together easier.
             </p>
           </div>
 
@@ -165,8 +167,8 @@ export default function AboutUsPage() {
               </h3>
 
               <p className="mt-3 text-sm leading-6 text-surface-700">
-                Turn your skills into real opportunities, build your
-                portfolio, and gain experience while studying.
+                Showcase what you do, find projects that fit your skills, and build
+                experience and credibility while you study.
               </p>
 
               <ul className="mt-6 space-y-3">
@@ -198,8 +200,8 @@ export default function AboutUsPage() {
               </h3>
 
               <p className="mt-3 text-sm leading-6 text-surface-700">
-                Find capable student freelancers who can bring fresh
-                skills and ideas to your projects.
+                Find motivated student freelancers with fresh skills and ideas to
+                help move your projects forward.
               </p>
 
               <ul className="mt-6 space-y-3">
@@ -239,8 +241,8 @@ export default function AboutUsPage() {
             </h2>
 
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-surface-700 sm:text-base">
-              From discovering an opportunity to completing a project,
-              GigVerse keeps the process straightforward.
+              Whether you're looking for work or looking for talent, GigVerse keeps
+              the journey from discovery to delivery straightforward.
             </p>
           </div>
 
@@ -256,8 +258,8 @@ export default function AboutUsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-surface-700">
-                Browse services or find jobs that match your skills,
-                requirements, budget, and interests.
+                Explore services or discover jobs based on your skills, requirements,
+                budget, and goals.
               </p>
             </div>
 
@@ -272,8 +274,8 @@ export default function AboutUsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-surface-700">
-                Submit proposals, review bids, and communicate directly
-                through the platform.
+                Send proposals, review offers, and communicate directly to find the
+                right fit for the work.
               </p>
             </div>
 
@@ -288,8 +290,8 @@ export default function AboutUsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-surface-700">
-                Work together, complete the project, and build a track
-                record through reviews and ratings.
+                Work together, complete the project, and build trust through reviews,
+                ratings, and a growing track record.
               </p>
             </div>
           </div>
@@ -308,7 +310,7 @@ export default function AboutUsPage() {
             </div>
 
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-surface-900 sm:text-4xl">
-              More than just a marketplace.
+              Tools that make the marketplace work.
             </h2>
           </div>
 
@@ -322,7 +324,8 @@ export default function AboutUsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-surface-700">
-                Connect directly with the people you're working with.
+                Communicate directly with clients and freelancers throughout the
+                project.
               </p>
             </div>
 
@@ -335,7 +338,7 @@ export default function AboutUsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-surface-700">
-                Build trust through ratings and written feedback.
+                Build confidence with ratings and feedback from completed work.
               </p>
             </div>
 
@@ -348,8 +351,8 @@ export default function AboutUsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-surface-700">
-                Rule-based tools help freelancers discover opportunities
-                and create stronger bids.
+                Smart assistance helps freelancers discover relevant opportunities
+                and create stronger proposals.
               </p>
             </div>
 
@@ -362,8 +365,7 @@ export default function AboutUsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-surface-700">
-                Keep project transactions and payment history organized
-                within the platform.
+                Keep project payments and transaction history organized in one place.
               </p>
             </div>
           </div>
@@ -386,7 +388,7 @@ export default function AboutUsPage() {
           </div>
 
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-[#f3f3ed] sm:text-4xl">
-            Your next opportunity could start here.
+            The right connection could start here.
           </h2>
 
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-[#aaa9a0] sm:text-base">
@@ -408,7 +410,7 @@ export default function AboutUsPage() {
                   sm:w-auto
                 "
               >
-                Get Started
+                Join GigVerse
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -427,7 +429,7 @@ export default function AboutUsPage() {
                   sm:w-auto
                 "
               >
-                Explore GigVerse
+                Explore Opportunities
               </Button>
             </Link>
           </div>

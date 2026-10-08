@@ -155,10 +155,10 @@ export default function MessagesPage() {
     conv.participants.find((p) => p.user.id !== user?.id)?.user;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-surface-900 mb-6">Messages</h1>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
-        <Card className="overflow-y-auto lg:col-span-1 p-0">
+    <div className="mx-auto flex h-[calc(100dvh-86px)] w-full max-w-[1800px] flex-col overflow-hidden px-4 py-5 sm:px-6 lg:px-8">
+      {/* <h1 className="mb-5 shrink-0 text-3xl font-bold text-surface-900">Messages</h1> */}
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 overflow-hidden lg:grid-cols-[340px_minmax(0,1fr)]">
+        <Card className="min-h-0 overflow-y-auto p-0">
           {conversations.length === 0 ? (
             <EmptyState title="No conversations" description="Start chatting from a user profile" />
           ) : (
@@ -185,36 +185,40 @@ export default function MessagesPage() {
           )}
         </Card>
 
-        <Card className="lg:col-span-2 flex flex-col p-0 overflow-hidden">
+        <Card className="flex min-h-0 flex-col overflow-hidden p-0">
           {activeConv ? (
             <>
-              <div className="border-b border-surface-300 p-4">
+              <div className="border-b border-surface-300 p-0 mb-2 mt-0 shrink-0">
                 <p className="font-medium">{getOtherParticipant(activeConv)?.name}</p>
                 {typing && <p className="text-xs text-primary-400">{typing}</p>}
               </div>
-              <MessageList
-                messages={messages}
-                currentUserId={user?.id}
-                typingText={typing}
-                onEditMessage={startEdit}
-                onUnsendMessage={unsend}
-              />
-              <MessageInput
-                key={activeConv.id}
-                onSendMessage={(text) => {
-                  socketRef.current?.emit('send_message', { conversationId: activeConv.id, text });
-                }}
-                onSendAttachment={async (file, text, onProgress) => {
-                  const msg = await sendAttachment(activeConv.id, file, text, onProgress);
-                  setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
-                }}
-                onTyping={(isTyping) => {
-                  socketRef.current?.emit('typing', { conversationId: activeConv.id, isTyping });
-                }}
-                editingMessage={editing}
-                onSubmitEdit={submitEdit}
-                onCancelEdit={cancelEdit}
-              />
+              <div className="min-h-0 flex-1 overflow-hidden">
+                <MessageList
+                  messages={messages}
+                  currentUserId={user?.id}
+                  typingText={typing}
+                  onEditMessage={startEdit}
+                  onUnsendMessage={unsend}
+                />
+              </div>
+              <div className="shrink-0">
+                <MessageInput
+                  key={activeConv.id}
+                  onSendMessage={(text) => {
+                    socketRef.current?.emit('send_message', { conversationId: activeConv.id, text });
+                  }}
+                  onSendAttachment={async (file, text, onProgress) => {
+                    const msg = await sendAttachment(activeConv.id, file, text, onProgress);
+                    setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
+                  }}
+                  onTyping={(isTyping) => {
+                    socketRef.current?.emit('typing', { conversationId: activeConv.id, isTyping });
+                  }}
+                  editingMessage={editing}
+                  onSubmitEdit={submitEdit}
+                  onCancelEdit={cancelEdit}
+                />
+              </div>
             </>
           ) : (
             <EmptyState title="Select a conversation" description="Choose a chat from the sidebar to start messaging" />

@@ -91,22 +91,22 @@ export default function LandingPage() {
           <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
             <div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                Connecting Students.
+                Connecting Talent.
                 <br />
                 Creating{" "}
-                <span className="brand-gradient-text">Opportunities.</span>
+                <span className="brand-gradient-text">Possibilities.</span>
               </h1>
               <p className="mt-6 text-lg text-surface-700 max-w-xl">
-                GigVerse AI is a student-first freelance marketplace to find
-                talent, get work done, and build your reputation.
+                GigVerse AI connects clients with skilled talent and helps freelancers
+                discover meaningful opportunities — all in one marketplace.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link to="/jobs">
-                  <Button size="lg">Find Jobs</Button>
+                  <Button size="lg">Find Opportunities</Button>
                 </Link>
                 <Link to="/services">
                   <Button size="lg" variant="outline">
-                    Offer Services
+                    Offer Your Services
                   </Button>
                 </Link>
               </div>
@@ -117,14 +117,14 @@ export default function LandingPage() {
                 <Sparkles className="h-3.5 w-3.5" /> AI Matchmaker
               </span>
               <h3 className="text-xl font-bold text-surface-900">
-                Smart matches.
+                Smarter connections.
               </h3>
               <h3 className="text-xl font-bold brand-gradient-text mb-3">
-                Better opportunities.
+                Better outcomes.
               </h3>
               <p className="text-sm text-surface-700">
-                Our AI recommends the right jobs and freelancers based on
-                skills, preferences and performance.
+                Our AI helps clients discover relevant talent and helps freelancers find
+                opportunities that match their skills, preferences and experience.
               </p>
               <div className="pointer-events-none absolute -bottom-6 -right-6 h-28 w-28 rounded-2xl brand-gradient opacity-20 rotate-12" />
             </Card>
@@ -145,7 +145,7 @@ export default function LandingPage() {
           {/* Categories */}
           <div className="mt-14">
             <h2 className="text-lg font-semibold text-surface-900 mb-4">
-              Explore Top Categories
+              Explore Popular Categories
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
               {categories.map(({ icon: Icon, label, count, color }) => (
@@ -190,11 +190,11 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-surface-900">
-              Why GigVerse?
+              Everything You Need to Get Work Done
             </h2>
             <p className="mt-3 text-surface-700 max-w-2xl mx-auto">
-              Everything you need to freelance as a student or hire student
-              talent.
+              A simple marketplace for discovering talent, finding opportunities, and
+              working together with confidence.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -202,12 +202,12 @@ export default function LandingPage() {
               {
                 icon: Search,
                 title: "Smart Discovery",
-                desc: "Browse services and jobs with powerful search and filters.",
+                desc: "Find relevant jobs, services, and talent with powerful search and filters.",
               },
               {
                 icon: Sparkles,
                 title: "AI Matching",
-                desc: "Get personalized job recommendations based on your skills.",
+                desc: "Get smarter recommendations based on your skills, preferences, and activity.",
               },
               {
                 icon: MessageSquare,
@@ -217,7 +217,7 @@ export default function LandingPage() {
               {
                 icon: Shield,
                 title: "Secure Platform",
-                desc: "Mock payment flow with transparent 15% commission.",
+                desc: "Keep every project clear with transparent pricing and a secure workflow.",
               },
             ].map(({ icon: Icon, title, desc }) => (
               <Card key={title} hover className="text-center">
@@ -244,18 +244,18 @@ export default function LandingPage() {
             {[
               {
                 step: "01",
-                title: "Create Your Profile",
-                desc: "Sign up as a freelancer or client. Add your skills and bio.",
+                title: "Set Up Your Profile",
+                desc: "Choose how you want to use GigVerse and build a profile that represents you.",
               },
               {
                 step: "02",
-                title: "Post or Browse",
-                desc: "Clients post jobs. Freelancers browse and bid with AI assistance.",
+                title: "Post or Discover",
+                desc: "Clients post jobs and freelancers discover opportunities that fit their skills.",
               },
               {
                 step: "03",
-                title: "Collaborate & Review",
-                desc: "Chat in real-time, complete work, pay securely, and leave reviews.",
+                title: "Work, Deliver & Review",
+                desc: "Collaborate through real-time chat, complete the work, and build trust through reviews.",
               },
             ].map(({ step, title, desc }) => (
               <div key={step} className="relative text-center">
@@ -272,12 +272,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Featured Services */}
+      {/* Popular Services */}
       <section className="py-20 bg-surface-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-surface-900">
-              Featured Services
+              Popular Services
             </h2>
             <Link
               to="/services"
@@ -469,7 +469,7 @@ export default function LandingPage() {
         lg:text-4xl
       "
     >
-      Ready to Start Your Journey?
+      Ready to Make Your Next Move?
     </h2>
 
     {/* Description */}
@@ -482,8 +482,8 @@ export default function LandingPage() {
         sm:text-base sm:leading-7
       "
     >
-      Join thousands of students earning while learning. It takes less
-      than 2 minutes to sign up.
+      Whether you are looking for your next opportunity or the right person for the job,
+      GigVerse makes it easier to get started.
     </p>
 
     {/* Buttons */}
@@ -512,7 +512,7 @@ export default function LandingPage() {
             sm:w-auto
           "
         >
-          Sign Up as Freelancer
+          Start as a Freelancer
         </Button>
       </Link>
 
@@ -533,7 +533,7 @@ export default function LandingPage() {
             sm:w-auto
           "
         >
-          Hire a Student
+          Hire Talent
         </Button>
       </Link>
     </div>

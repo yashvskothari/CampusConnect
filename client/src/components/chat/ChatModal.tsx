@@ -146,7 +146,7 @@ export default function ChatModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex h-[500px] w-84 sm:w-96 flex-col overflow-hidden rounded-2xl border border-surface-300 bg-surface-100 shadow-2xl transition-all animate-in fade-in slide-in-from-bottom-3 duration-200">
+    <div className="fixed bottom-4 right-4 z-50 flex h-125 w-84 sm:w-96 flex-col overflow-hidden rounded-2xl border border-surface-300 bg-surface-100 shadow-2xl transition-all animate-in fade-in slide-in-from-bottom-3 duration-200">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-surface-300 bg-surface-100 px-4 py-3">
         <div className="flex items-center gap-3">

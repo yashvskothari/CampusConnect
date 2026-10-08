@@ -19,7 +19,9 @@ export default function MessageList({
   onEditMessage,
   onUnsendMessage,
 }: MessageListProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const shouldStickToBottomRef = useRef(true);
+  const previousMessageCountRef = useRef(messages.length);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   // Re-evaluate the 15 minute edit window while the chat stays open
@@ -30,9 +32,38 @@ export default function MessageList({
     return () => clearInterval(t);
   }, []);
 
+  // Only follow new messages when the user is already near the bottom.
+  // This prevents sending/receiving a message from forcing the user away
+  // from older messages they are currently reading.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages.length, typingText]);
+    const container = listRef.current;
+    if (!container) return;
+
+    const wasInitialLoad = previousMessageCountRef.current === 0 && messages.length > 0;
+    const shouldScroll = wasInitialLoad || shouldStickToBottomRef.current;
+
+    if (shouldScroll) {
+      requestAnimationFrame(() => {
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: wasInitialLoad ? 'auto' : 'smooth',
+        });
+      });
+    }
+
+    previousMessageCountRef.current = messages.length;
+  }, [messages.length]);
+
+  const handleScroll = () => {
+    const container = listRef.current;
+    if (!container) return;
+
+    const distanceFromBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight;
+
+    // 100px tolerance makes normal scrolling feel natural.
+    shouldStickToBottomRef.current = distanceFromBottom <= 100;
+  };
 
   const closeMenu = () => {
     setOpenMenuId(null);
@@ -40,9 +71,9 @@ export default function MessageList({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-surface-0" onClick={closeMenu}>
+    <div ref={listRef} onScroll={handleScroll} className="h-full min-h-0 overflow-y-auto p-4 space-y-3 bg-surface-0 overscroll-contain" onClick={closeMenu}>
       {messages.length === 0 ? (
-        <div className="flex h-full min-h-[160px] items-center justify-center text-center text-xs text-surface-600">
+        <div className="flex h-full min-h-40 items-center justify-center text-center text-xs text-surface-600">
           No messages yet. Send a message to start the conversation!
         </div>
       ) : (
@@ -153,7 +184,7 @@ export default function MessageList({
                       : 'bg-surface-200 border border-surface-300 text-surface-900 rounded-bl-xs'
                   }`}
                 >
-                  {msg.text && <p className="whitespace-pre-wrap break-words">{msg.text}</p>}
+                  {msg.text && <p className="whitespace-pre-wrap wrap-break-word">{msg.text}</p>}
                   {msg.fileUrl && <MessageAttachment message={msg} isMe={isMe} />}
                   <span
                     className={`mt-1 block text-[10px] ${isMe ? 'text-white/70 text-right' : 'text-surface-600'}`}
@@ -174,7 +205,7 @@ export default function MessageList({
           </div>
         </div>
       )}
-      <div ref={bottomRef} />
+
     </div>
   );
 }
