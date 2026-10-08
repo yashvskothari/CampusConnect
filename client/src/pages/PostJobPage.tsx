@@ -1,16 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { BriefcaseBusiness, CalendarDays, ChevronDown, IndianRupee, FileText } from 'lucide-react';
+import { BriefcaseBusiness, CalendarDays, IndianRupee, FileText } from 'lucide-react';
 
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { jobApi } from '../services';
-import { CATEGORIES } from '../types';
+import CategorySkillFields from '../components/CategorySkillFields';
 
 const schema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -20,6 +20,7 @@ const schema = z.object({
   budget: z.coerce.number().min(1, 'Budget must be at least $1'),
   deadline: z.string().min(1, 'Deadline is required'),
   category: z.string().min(1, 'Category is required'),
+  skill: z.string().trim().min(1, 'Please select or enter the skill needed').max(80, 'Skill must be 80 characters or less'),
 });
 
 type FormInput = z.input<typeof schema>;
@@ -29,8 +30,6 @@ export default function PostJobPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [categoryOpen, setCategoryOpen] = useState(false);
-  const categoryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (showCancelConfirm) {
@@ -42,22 +41,6 @@ export default function PostJobPage() {
       document.body.style.overflow = '';
     };
   }, [showCancelConfirm]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        categoryRef.current &&
-        !categoryRef.current.contains(event.target as Node)
-      ) {
-        setCategoryOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   const {
     register,
@@ -73,17 +56,16 @@ export default function PostJobPage() {
       budget: undefined,
       deadline: '',
       category: '',
+      skill: '',
     },
   });
 
   const selectedCategory = watch('category');
+  const selectedSkill = watch('skill');
 
-  const handleSelectCategory = (category: string) => {
-    setValue('category', category, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-    setCategoryOpen(false);
+  const handleCategorySkillChange = ({ category, skill }: { category: string; skill: string }) => {
+    setValue('category', category, { shouldValidate: true, shouldDirty: true });
+    setValue('skill', skill, { shouldValidate: true, shouldDirty: true });
   };
 
   const onSubmit = async (data: FormOutput) => {
@@ -117,7 +99,8 @@ export default function PostJobPage() {
       formErrors.description?.message ||
       formErrors.budget?.message ||
       formErrors.deadline?.message ||
-      formErrors.category?.message;
+      formErrors.category?.message ||
+      formErrors.skill?.message;
 
     if (firstErrorMessage) {
       toast.error(firstErrorMessage);
@@ -268,87 +251,20 @@ export default function PostJobPage() {
               </div>
             </div>
 
-            {/* ================= CATEGORY ================= */}
+            {/* ================= CATEGORY + SKILL ================= */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-surface-800">
-                Category
-              </label>
-
               <input type="hidden" {...register('category')} />
+              <input type="hidden" {...register('skill')} />
 
-              <div ref={categoryRef} className="relative">
-                <button
-                  type="button"
-                  onClick={() => setCategoryOpen((prev) => !prev)}
-                  className="
-                    flex w-full items-center justify-between rounded-lg
-                    border border-surface-400
-                    bg-surface-0
-                    px-3.5 py-2.5
-                    text-sm
-                    text-surface-900
-                    transition-colors duration-200
-                    focus:border-primary-500
-                    focus:outline-none
-                    focus:ring-1
-                    focus:ring-primary-500
-                  "
-                >
-                  <span
-                    className={
-                      selectedCategory ? 'text-surface-900' : 'text-surface-600'
-                    }
-                  >
-                    {selectedCategory || 'Select a category'}
-                  </span>
-
-                  <ChevronDown
-                    className={`h-4 w-4 text-surface-600 transition-transform duration-200 ${
-                      categoryOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
-
-                {categoryOpen && (
-                  <ul
-                    className="
-                      absolute z-10 mt-1.5 max-h-56 w-full
-                      overflow-auto rounded-lg
-                      border border-surface-400
-                      bg-surface-0
-                      py-1
-                      shadow-lg
-                    "
-                  >
-                    {CATEGORIES.map((category) => (
-                      <li key={category}>
-                        <button
-                          type="button"
-                          onClick={() => handleSelectCategory(category)}
-                          className={`
-                            block w-full px-3.5 py-2 text-left text-sm
-                            transition-colors duration-150
-                            hover:bg-surface-200
-                            ${
-                              selectedCategory === category
-                                ? 'bg-primary-500/10 text-primary-400 font-medium'
-                                : 'text-surface-900'
-                            }
-                          `}
-                        >
-                          {category}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-              {errors.category && (
-                <p className="mt-1.5 text-xs text-red-400">
-                  {errors.category.message}
-                </p>
-              )}
+              <CategorySkillFields
+                category={selectedCategory}
+                skill={selectedSkill}
+                onChange={handleCategorySkillChange}
+                categoryError={errors.category?.message}
+                skillError={errors.skill?.message}
+                skillLabel="Skill Needed"
+                customLabel="Describe the skill you need"
+              />
             </div>
 
             {/* ================= DIVIDER ================= */}

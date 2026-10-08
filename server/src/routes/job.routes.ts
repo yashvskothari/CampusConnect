@@ -60,6 +60,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 router.post('/', authenticate, authorize('CLIENT', 'ADMIN'), async (req: Request, res: Response) => {
   try {
     const { title, description, budget, deadline, category } = req.body;
+    const skill = typeof req.body.skill === 'string' ? req.body.skill.trim().slice(0, 80) : '';
     if (!title || !description || !budget || !deadline || !category) {
       res.status(400).json({ error: 'All fields are required' });
       return;
@@ -72,6 +73,7 @@ router.post('/', authenticate, authorize('CLIENT', 'ADMIN'), async (req: Request
         budget: Number(budget),
         deadline: new Date(deadline),
         category,
+        skill: skill || null,
         clientId: req.user!.userId,
       },
       include: {

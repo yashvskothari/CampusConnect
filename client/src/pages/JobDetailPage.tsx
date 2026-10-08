@@ -117,6 +117,7 @@ export default function JobDetailPage() {
             <div className="flex items-center gap-2 mb-4">
               <Badge status={job.status} />
               <span className="text-xs text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-full">{job.category}</span>
+              {job.skill && <span className="text-xs text-surface-800 bg-surface-200 px-2 py-0.5 rounded-full">{job.skill}</span>}
             </div>
             <h1 className="text-2xl font-bold text-surface-900">{job.title}</h1>
             <p className="mt-4 text-surface-800 whitespace-pre-wrap">{job.description}</p>

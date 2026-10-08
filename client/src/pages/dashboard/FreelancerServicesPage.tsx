@@ -5,7 +5,6 @@ import {
   BriefcaseBusiness,
   FileText,
   Plus,
-  Tag,
   Trash2,
   X,
 } from 'lucide-react';
@@ -18,7 +17,8 @@ import EmptyState from '../../components/EmptyState';
 import { useAuth } from '../../context/AuthContext';
 import { serviceApi } from '../../services';
 import { formatCurrency } from '../../utils';
-import { CATEGORIES, type Service } from '../../types';
+import CategorySkillFields from '../../components/CategorySkillFields';
+import type { Service } from '../../types';
 
 export default function FreelancerServicesPage() {
   const { user } = useAuth();
@@ -32,8 +32,18 @@ export default function FreelancerServicesPage() {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm();
+
+  const selectedCategory = (watch('category') as string) || '';
+  const selectedSkill = (watch('skill') as string) || '';
+
+  const handleCategorySkillChange = ({ category, skill }: { category: string; skill: string }) => {
+    setValue('category', category, { shouldValidate: true, shouldDirty: true });
+    setValue('skill', skill, { shouldValidate: true, shouldDirty: true });
+  };
 
   const fetchServices = () => {
     if (!user) return;
@@ -221,67 +231,32 @@ export default function FreelancerServicesPage() {
               )}
             </div>
 
-            {/* CATEGORY + PRICE */}
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div>
-                <div className="mb-1.5 flex items-center gap-2">
-                  <Tag className="h-4 w-4 text-surface-600" />
+            {/* CATEGORY + SERVICE TYPE */}
+            <div>
+              <input type="hidden" {...register('category', { required: true })} />
+              <input type="hidden" {...register('skill', { required: true, maxLength: 80 })} />
 
-                  <label className="text-sm font-medium text-surface-800">
-                    Category
-                  </label>
-                </div>
-
-                <select
-                  {...register('category', {
-                    required: true,
-                  })}
-                  className="
-                    w-full rounded-lg
-                    border border-surface-400
-                    bg-surface-0
-                    px-3.5 py-2.5
-                    text-sm
-                    text-surface-900
-                    transition-colors duration-200
-                    focus:border-primary-500
-                    focus:outline-none
-                    focus:ring-1
-                    focus:ring-primary-500
-                  "
-                >
-                  <option value="">Select a category</option>
-
-                  {CATEGORIES.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-
-                {errors.category && (
-                  <p className="mt-1.5 text-xs text-red-400">
-                    Category is required
-                  </p>
-                )}
-              </div>
-
-              <Input
-                label="Price ($)"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="e.g. 50"
-                error={
-                  errors.price
-                    ? 'Price is required'
-                    : undefined
-                }
-                {...register('price', {
-                  required: true,
-                })}
+              <CategorySkillFields
+                category={selectedCategory}
+                skill={selectedSkill}
+                onChange={handleCategorySkillChange}
+                categoryError={errors.category ? 'Category is required' : undefined}
+                skillError={errors.skill ? 'Please select or enter a service type' : undefined}
+                skillLabel="Service Type"
+                customLabel="Describe your service"
               />
             </div>
+
+            {/* PRICE */}
+            <Input
+              label="Price ($)"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="e.g. 50"
+              error={errors.price ? 'Price is required' : undefined}
+              {...register('price', { required: true })}
+            />
 
             {/* DIVIDER */}
             <div className="border-t border-white/6" />
@@ -356,6 +331,7 @@ export default function FreelancerServicesPage() {
                     "
                   >
                     {service.category}
+                    {service.skill ? ` · ${service.skill}` : ''}
                   </span>
                 </div>
 

@@ -17,6 +17,7 @@ export interface Service {
   title: string;
   description: string;
   category: string;
+  skill?: string | null;
   price: number;
   freelancerId: string;
   freelancer?: Pick<User, 'id' | 'name' | 'avatar' | 'rating'>;
@@ -30,6 +31,7 @@ export interface Job {
   budget: number;
   deadline: string;
   category: string;
+  skill?: string | null;
   status: 'OPEN' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   clientId: string;
   client?: Pick<User, 'id' | 'name' | 'avatar' | 'rating'>;
@@ -113,15 +115,30 @@ export interface BidSuggestion {
 export const CATEGORIES = [
   'Web Development',
   'Software Development',
-  'Data Analyst',
   'Mobile Development',
   'AI & Machine Learning',
+  'Data & Analytics',
   'Cloud & DevOps',
-  'UI/UX Design',
+  'Cybersecurity',
+  'UI/UX & Design',
   'Graphic Design',
-  'Writing',
-  'Marketing',
-  'Video Editing',
-  'Data Entry',
-  'Tutoring',
+  'Video & Animation',
+  'Photography',
+  'Writing & Content',
+  'Translation & Languages',
+  'Digital Marketing',
+  'Sales & Business',
+  'Finance & Accounting',
+  'Administrative Services',
+  'Education & Tutoring',
+  'Engineering & Architecture',
+  'Music & Audio',
+  'Legal & Professional Services',
+  'HR & Recruitment',
+  'E-commerce',
+  'Social Media',
+  'Presentations & Documents',
+  'AR/VR & Emerging Technology',
+  'Personal & Creative Services',
+  'Other',
 ] as const;

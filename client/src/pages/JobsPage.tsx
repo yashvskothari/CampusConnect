@@ -354,6 +354,7 @@ export default function JobsPage() {
                         "
                       >
                         {job.category}
+                        {job.skill ? ` · ${job.skill}` : ''}
                       </span>
                     </div>
 

@@ -330,6 +330,7 @@ export default function ServicesPage() {
                     "
                   >
                     {service.category}
+                    {service.skill ? ` · ${service.skill}` : ''}
                   </span>
                 </div>
 

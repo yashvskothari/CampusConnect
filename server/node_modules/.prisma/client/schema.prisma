@@ -87,6 +87,7 @@ model Service {
   title        String
   description  String
   category     String
+  skill        String?
   price        Float
   freelancerId String
   freelancer   User     @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
@@ -100,6 +101,7 @@ model Job {
   budget      Float
   deadline    DateTime
   category    String
+  skill       String?
   status      JobStatus @default(OPEN)
   clientId    String
   client      User      @relation("ClientJobs", fields: [clientId], references: [id], onDelete: Cascade)

@@ -59,6 +59,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 router.post('/', authenticate, authorize('FREELANCER', 'ADMIN'), async (req: Request, res: Response) => {
   try {
     const { title, description, category, price } = req.body;
+    const skill = typeof req.body.skill === 'string' ? req.body.skill.trim().slice(0, 80) : '';
     if (!title || !description || !category || !price) {
       res.status(400).json({ error: 'All fields are required' });
       return;
@@ -69,6 +70,7 @@ router.post('/', authenticate, authorize('FREELANCER', 'ADMIN'), async (req: Req
         title,
         description,
         category,
+        skill: skill || null,
         price: Number(price),
         freelancerId: req.user!.userId,
       },
@@ -96,12 +98,14 @@ router.put('/:id', authenticate, async (req: Request, res: Response) => {
     }
 
     const { title, description, category, price } = req.body;
+    const skill = typeof req.body.skill === 'string' ? req.body.skill.trim().slice(0, 80) : undefined;
     const service = await prisma.service.update({
       where: { id },
       data: {
         ...(title && { title }),
         ...(description && { description }),
         ...(category && { category }),
+        ...(skill !== undefined && { skill: skill || null }),
         ...(price && { price: Number(price) }),
       },
       include: {
