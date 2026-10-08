@@ -50,7 +50,8 @@ export default function MessageList({
           const isMe = msg.senderId === currentUserId;
           const deleted = Boolean(msg.deletedAt);
           const emojiOnly = !deleted && !msg.fileUrl && isEmojiOnly(msg.text);
-          const canEdit = isMe && !deleted && Boolean(msg.text) && canEditMessage(msg.createdAt, now);
+          const canEditText = isMe && !deleted && Boolean(msg.text);
+          const canEdit = canEditText && canEditMessage(msg.createdAt, now);
           const showActions = isMe && !deleted && (onEditMessage || onUnsendMessage);
           const menuOpen = openMenuId === msg.id;
           const confirming = confirmId === msg.id;
@@ -87,18 +88,20 @@ export default function MessageList({
                     </div>
                   ) : menuOpen ? (
                     <div className="flex items-center gap-0.5 rounded-full border border-surface-300 bg-surface-200 p-0.5">
-                      {canEdit && onEditMessage && (
+                      {canEditText && onEditMessage && (
                         <button
                           type="button"
-                          title="Edit"
+                          title={canEdit ? 'Edit message' : 'Messages can only be edited within 15 minutes of sending'}
                           aria-label="Edit message"
+                          disabled={!canEdit}
                           onClick={() => {
                             onEditMessage(msg);
                             closeMenu();
                           }}
-                          className="rounded-full p-1.5 text-surface-800 hover:bg-surface-300 hover:text-white cursor-pointer"
+                          className="flex items-center gap-1 rounded-full px-2 py-1 text-xs text-surface-800 hover:bg-surface-300 hover:text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-surface-800"
                         >
                           <Pencil className="h-3.5 w-3.5" />
+                          Edit
                         </button>
                       )}
                       {onUnsendMessage && (
@@ -107,9 +110,10 @@ export default function MessageList({
                           title="Unsend"
                           aria-label="Unsend message"
                           onClick={() => setConfirmId(msg.id)}
-                          className="rounded-full p-1.5 text-surface-800 hover:bg-red-500/20 hover:text-red-400 cursor-pointer"
+                          className="flex items-center gap-1 rounded-full px-2 py-1 text-xs text-surface-800 hover:bg-red-500/20 hover:text-red-400 cursor-pointer"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
+                          Unsend
                         </button>
                       )}
                     </div>
@@ -118,7 +122,7 @@ export default function MessageList({
                       type="button"
                       aria-label="Message options"
                       onClick={() => setOpenMenuId(msg.id)}
-                      className="rounded-full p-1 text-surface-600 opacity-100 sm:opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100 hover:bg-surface-200 hover:text-surface-900 cursor-pointer"
+                      className="rounded-full p-1 text-surface-600 opacity-70 transition-opacity hover:opacity-100 focus:opacity-100 hover:bg-surface-200 hover:text-surface-900 cursor-pointer"
                     >
                       <MoreVertical className="h-4 w-4" />
                     </button>
