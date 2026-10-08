@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, DollarSign, MessageSquare, Sparkles } from 'lucide-react';
+import { Briefcase, IndianRupee, MessageSquare, Sparkles } from 'lucide-react';
 import Card from '../../components/Card';
 import Badge from '../../components/Badge';
 import Button from '../../components/Button';
@@ -36,7 +36,7 @@ export default function FreelancerDashboard() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Services Listed', value: services.length, icon: Briefcase, color: 'bg-primary-500/15 text-primary-400' },
-          { label: 'Active Bids', value: activeBids.length, icon: DollarSign, color: 'bg-teal-100 text-teal-700' },
+          { label: 'Active Bids', value: activeBids.length, icon: IndianRupee, color: 'bg-teal-100 text-teal-700' },
           { label: 'Active Jobs', value: acceptedJobs.length, icon: Briefcase, color: 'bg-green-100 text-green-600' },
           { label: 'Rating', value: user?.rating.toFixed(1) ?? '0', icon: Sparkles, color: 'bg-amber-100 text-amber-600' },
         ].map(({ label, value, icon: Icon, color }) => (

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { BriefcaseBusiness, CalendarDays, ChevronDown, DollarSign, FileText } from 'lucide-react';
+import { BriefcaseBusiness, CalendarDays, ChevronDown, IndianRupee, FileText } from 'lucide-react';
 
 import Card from '../components/Card';
 import Button from '../components/Button';
@@ -229,7 +229,7 @@ export default function PostJobPage() {
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
                 <div className="mb-1.5 flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-surface-600" />
+                  <IndianRupee className="h-4 w-4 text-surface-600" />
 
                   <label className="text-sm font-medium text-surface-800">
                     Budget
@@ -241,7 +241,7 @@ export default function PostJobPage() {
                   type="number"
                   step="0.01"
                   min="1"
-                  placeholder="e.g. 150"
+                  placeholder="e.g. 5000"
                   error={errors.budget?.message}
                   {...register('budget', {
                     valueAsNumber: true,

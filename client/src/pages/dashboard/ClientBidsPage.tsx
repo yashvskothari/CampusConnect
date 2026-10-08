@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Check, Clock3, IndianRupee, UserRound, MessageSquare } from 'lucide-react';
+import { Check, Clock3, UserRound, MessageSquare } from 'lucide-react';
 
 import Card from '../../components/Card';
 import Badge from '../../components/Badge';
@@ -15,6 +15,8 @@ import { jobApi, bidApi } from '../../services';
 import { formatCurrency } from '../../utils';
 
 import type { Bid } from '../../types';
+
+
 
 export default function ClientBidsPage() {
   const { user } = useAuth();
@@ -259,8 +261,6 @@ export default function ClientBidsPage() {
                     "
                   >
                     {/* Quote */}
-                    <div className="flex items-center gap-2">
-                      <IndianRupee className="h-4 w-4 text-primary-500" />
 
                       <div>
                         <p className="text-[11px] uppercase tracking-wide text-surface-600">
@@ -271,7 +271,7 @@ export default function ClientBidsPage() {
                           {formatCurrency(bid.quote)}
                         </p>
                       </div>
-                    </div>
+                    
 
                     {/* Delivery */}
                     <div className="flex items-center gap-2">
@@ -377,3 +377,4 @@ export default function ClientBidsPage() {
     </div>
   );
 }
+

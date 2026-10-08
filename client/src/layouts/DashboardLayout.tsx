@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, User, DollarSign, Star, Sparkles, Plus } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, User, IndianRupee, Star, Sparkles, Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../utils';
 
@@ -55,7 +55,7 @@ export default function DashboardLayout({ links }: { links: SidebarLink[] }) {
 export const freelancerLinks: SidebarLink[] = [
   { to: '/dashboard/freelancer', label: 'Overview', icon: <LayoutDashboard className="h-4 w-4" /> },
   { to: '/dashboard/freelancer/services', label: 'My Services', icon: <Briefcase className="h-4 w-4" /> },
-  { to: '/dashboard/freelancer/bids', label: 'My Bids', icon: <DollarSign className="h-4 w-4" /> },
+  { to: '/dashboard/freelancer/bids', label: 'My Bids', icon: <IndianRupee className="h-4 w-4" /> },
   { to: '/dashboard/freelancer/recommendations', label: 'AI Matches', icon: <Sparkles className="h-4 w-4" /> },
   { to: '/messages', label: 'Messages', icon: <MessageSquare className="h-4 w-4" /> },
   { to: '/profile', label: 'Profile', icon: <User className="h-4 w-4" /> },
@@ -64,8 +64,10 @@ export const freelancerLinks: SidebarLink[] = [
 export const clientLinks: SidebarLink[] = [
   { to: '/dashboard/client', label: 'Overview', icon: <LayoutDashboard className="h-4 w-4" /> },
   { to: '/jobs/new', label: 'Post Job', icon: <Plus className="h-4 w-4" /> },
-  { to: '/dashboard/client/bids', label: 'Received Bids', icon: <DollarSign className="h-4 w-4" /> },
+  { to: '/dashboard/client/bids', label: 'Received Bids', icon: <IndianRupee className="h-4 w-4" /> },
   { to: '/dashboard/client/payments', label: 'Payments', icon: <Star className="h-4 w-4" /> },
   { to: '/messages', label: 'Messages', icon: <MessageSquare className="h-4 w-4" /> },
   { to: '/profile', label: 'Profile', icon: <User className="h-4 w-4" /> },
 ];
+
+

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Briefcase, Users, DollarSign } from 'lucide-react';
+import { Briefcase, Users, IndianRupee } from 'lucide-react';
 import Card from '../../components/Card';
 import Badge from '../../components/Badge';
 import Button from '../../components/Button';
@@ -44,7 +44,7 @@ export default function ClientDashboard() {
           { label: 'Posted Jobs', value: jobs.length, icon: Briefcase, color: 'bg-primary-500/15 text-primary-400' },
           { label: 'Open Jobs', value: openJobs.length, icon: Briefcase, color: 'bg-green-100 text-green-600' },
           { label: 'Pending Bids', value: pendingBids.length, icon: Users, color: 'bg-teal-100 text-teal-700' },
-          { label: 'In Progress', value: inProgress.length, icon: DollarSign, color: 'bg-amber-100 text-amber-600' },
+          { label: 'In Progress', value: inProgress.length, icon: IndianRupee, color: 'bg-amber-100 text-amber-600' },
         ].map(({ label, value, icon: Icon, color }) => (
           <Card key={label}>
             <div className="flex items-center gap-3">
