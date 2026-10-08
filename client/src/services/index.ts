@@ -162,6 +162,37 @@ export const messageApi = {
       `/messages/conversations/${conversationId}/messages`,
       { text }
     ),
+
+  sendAttachment: (
+    conversationId: string,
+    file: File,
+    text?: string,
+    onProgress?: (percent: number) => void
+  ) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (text) formData.append('text', text);
+    return api.post<Message>(
+      `/messages/conversations/${conversationId}/attachments`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (e) => {
+          if (e.total) onProgress?.(Math.round((e.loaded / e.total) * 100));
+        },
+      }
+    );
+  },
+
+  /** Attachments are private: fetched with the auth token, returned as a Blob. */
+  getAttachment: (messageId: string) =>
+    api.get<Blob>(`/messages/${messageId}/attachment`, { responseType: 'blob' }),
+
+  editMessage: (messageId: string, text: string) =>
+    api.patch<Message>(`/messages/${messageId}`, { text }),
+
+  deleteMessage: (messageId: string) =>
+    api.delete<Message>(`/messages/${messageId}`),
 };
 
 export const recommendationApi = {

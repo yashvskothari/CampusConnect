@@ -85,11 +85,16 @@ export interface Payment {
 export interface Message {
   id: string;
   text: string;
-  fileUrl?: string;
+  fileUrl?: string | null;
+  fileName?: string | null;
+  fileType?: string | null;
+  fileSize?: number | null;
   senderId: string;
   conversationId: string;
   sender?: Pick<User, 'id' | 'name' | 'avatar'>;
   createdAt: string;
+  editedAt?: string | null;
+  deletedAt?: string | null;
 }
 
 export interface Conversation {

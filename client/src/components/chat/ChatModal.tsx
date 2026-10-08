@@ -6,6 +6,7 @@ import MessageList from './MessageList';
 import MessageInput from './MessageInput';
 import { messageApi } from '../../services';
 import { useAuth } from '../../context/AuthContext';
+import { useMessageActions, applyMessageUpdate, sendAttachment } from '../../hooks/useMessageActions';
 import type { Conversation, Message } from '../../types';
 
 interface ChatModalProps {
@@ -34,6 +35,7 @@ export default function ChatModal({
   const [error, setError] = useState<string | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const receiverTypingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { editing, startEdit, cancelEdit, submitEdit, unsend } = useMessageActions(socketRef);
 
   useEffect(() => {
     if (!isOpen || !token || !targetUserId) return;
@@ -119,7 +121,14 @@ export default function ChatModal({
       }
     };
 
+    const handleMessageUpdated = (msg: Message) => {
+      if (msg.conversationId === conversation.id) {
+        setMessages((prev) => applyMessageUpdate(prev, msg));
+      }
+    };
+
     socket.on('new_message', handleNewMessage);
+    socket.on('message_updated', handleMessageUpdated);
     socket.on('typing', handleTyping);
 
     return () => {
@@ -129,6 +138,7 @@ export default function ChatModal({
       setTyping(null);
       socket.emit('leave_conversation', conversation.id);
       socket.off('new_message', handleNewMessage);
+      socket.off('message_updated', handleMessageUpdated);
       socket.off('typing', handleTyping);
     };
   }, [conversation, targetUserId, targetUserName]);
@@ -178,13 +188,23 @@ export default function ChatModal({
             messages={messages}
             currentUserId={user?.id}
             typingText={typing}
+            onEditMessage={startEdit}
+            onUnsendMessage={unsend}
           />
           <MessageInput
             disabled={!conversation}
+            editingMessage={editing}
+            onSubmitEdit={submitEdit}
+            onCancelEdit={cancelEdit}
             onSendMessage={(text) => {
               if (conversation && socketRef.current) {
                 socketRef.current.emit('send_message', { conversationId: conversation.id, text });
               }
+            }}
+            onSendAttachment={async (file, text, onProgress) => {
+              if (!conversation) throw new Error('No conversation');
+              const msg = await sendAttachment(conversation.id, file, text, onProgress);
+              setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
             }}
             onTyping={(isTyping) => {
               if (conversation && socketRef.current) {
