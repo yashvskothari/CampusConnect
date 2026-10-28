@@ -323,222 +323,54 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-<section
-  className="
-    relative isolate overflow-hidden
-    border-white/6
-    bg-[#0f0f0d]
-    py-20 sm:py-24 lg:py-28
-  "
->
-  {/* ================= BACKGROUND ================= */}
+      <section className="relative isolate overflow-hidden border-t border-b border-surface-300 bg-surface-50 py-20 sm:py-24 lg:py-28 transition-colors duration-200">
+        {/* Ambient background glows */}
+        <div className="pointer-events-none absolute -left-20 -top-24 h-72 w-72 rounded-full bg-primary-500/15 blur-[100px] sm:h-96 sm:w-96" />
+        <div className="pointer-events-none absolute -right-20 -bottom-24 h-72 w-72 rounded-full bg-accent-500/15 blur-[100px] sm:h-96 sm:w-96" />
 
-  {/* Top-left amber glow */}
-  <div
-    className="
-      pointer-events-none absolute
-      -left-32 -top-32
-      h-80 w-80
-      rounded-full
-      bg-primary-500/25
-      blur-[100px]
-      sm:h-112 sm:w-md
-    "
-  />
+        {/* ================= CONTENT ================= */}
+        <div className="relative z-10 mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          {/* Icon */}
+          <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-primary-500/30 bg-primary-500/10 shadow-sm">
+            <Zap className="h-6 w-6 text-primary-500 sm:h-7 sm:w-7" />
+          </div>
 
-  {/* Top-right amber glow */}
-  <div
-    className="
-      pointer-events-none absolute
-      -right-40 -top-24
-      h-96 w-96
-      rounded-full
-      bg-primary-600/20
-      blur-[120px]
-      sm:h-128 sm:w-lg
-    "
-  />
+          {/* Heading */}
+          <h2 className="text-2xl font-bold tracking-tight text-surface-900 sm:text-3xl lg:text-4xl">
+            Ready to Make Your Next Move?
+          </h2>
 
-  {/* Bottom-left glow */}
-  <div
-    className="
-      pointer-events-none absolute
-      -bottom-40 -left-20
-      h-80 w-80
-      rounded-full
-      bg-primary-500/20
-      blur-[110px]
-      sm:h-120 sm:w-120
-    "
-  />
+          {/* Description */}
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-surface-700 sm:text-base sm:leading-7">
+            Whether you are looking for your next opportunity or the right person for the job,
+            GigVerse makes it easier to get started.
+          </p>
 
-  {/* Bottom-right glow */}
-  <div
-    className="
-      pointer-events-none absolute
-      -bottom-40 -right-20
-      h-96 w-96
-      rounded-full
-      bg-primary-700/25
-      blur-[120px]
-      sm:h-128 sm:w-lg
-    "
-  />
+          {/* Buttons */}
+          <div className="mx-auto mt-8 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
+            {/* Primary Action for Freelancers */}
+            <Link to="/signup?role=FREELANCER" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto font-semibold shadow-md shadow-primary-500/20 hover:shadow-lg hover:shadow-primary-500/30 transition-all duration-200"
+              >
+                Start as a Freelancer
+              </Button>
+            </Link>
 
-  {/* Large diagonal amber light */}
-  <div
-    className="
-      pointer-events-none absolute
-      left-[-15%] top-[42%]
-      h-24 w-[65%]
-      rotate-[-18deg]
-      rounded-full
-      bg-primary-500/10
-      blur-[55px]
-      sm:h-32
-    "
-  />
-
-  {/* Opposite diagonal light */}
-  <div
-    className="
-      pointer-events-none absolute
-      right-[-15%] top-[28%]
-      h-24 w-[60%]
-      rotate-18
-      rounded-full
-      bg-primary-500/10
-      blur-[60px]
-      sm:h-32
-    "
-  />
-
-  {/* Dark center vignette — keeps text readable */}
-  <div
-    className="
-      pointer-events-none absolute inset-0
-      bg-[radial-gradient(ellipse_at_center,rgba(15,15,13,0.15)_0%,rgba(15,15,13,0.35)_45%,rgba(15,15,13,0.82)_100%)]
-    "
-  />
-
-  {/* Very subtle top-to-bottom depth */}
-  <div
-    className="
-      pointer-events-none absolute inset-0
-      bg-[linear-gradient(180deg,rgba(255,255,255,0.025),transparent_35%,rgba(0,0,0,0.18))]
-    "
-  />
-
-  {/* ================= CONTENT ================= */}
-
-  <div
-    className="
-      relative z-10
-      mx-auto max-w-7xl
-      px-4 text-center
-      sm:px-6
-      lg:px-8
-    "
-  >
-    {/* Icon */}
-    <div
-      className="
-        mx-auto mb-5
-        flex h-12 w-12
-        items-center justify-center
-        rounded-xl
-        border border-primary-500/20
-        bg-primary-500/10
-      "
-    >
-      <Zap
-        className="
-          h-6 w-6
-          text-primary-400
-          sm:h-7 sm:w-7
-        "
-      />
-    </div>
-
-    {/* Heading */}
-    <h2
-      className="
-        text-2xl font-bold tracking-tight
-        text-[#f3f3ed]
-        sm:text-3xl
-        lg:text-4xl
-      "
-    >
-      Ready to Make Your Next Move?
-    </h2>
-
-    {/* Description */}
-    <p
-      className="
-        mx-auto mt-4
-        max-w-xl
-        text-sm leading-6
-        text-[#aaa9a0]
-        sm:text-base sm:leading-7
-      "
-    >
-      Whether you are looking for your next opportunity or the right person for the job,
-      GigVerse makes it easier to get started.
-    </p>
-
-    {/* Buttons */}
-    <div
-      className="
-        mx-auto mt-8
-        flex w-full max-w-md
-        flex-col gap-3
-        sm:max-w-none
-        sm:flex-row sm:justify-center sm:gap-4
-      "
-    >
-      {/* Primary */}
-      <Link to="/signup" className="w-full sm:w-auto">
-        <Button
-          size="lg"
-          className="
-            w-full
-            border border-primary-400
-            bg-primary-500
-            text-[#171713]
-            shadow-[0_4px_20px_rgba(217,154,30,0.18)]
-            transition-all duration-200
-            hover:bg-primary-400
-            hover:shadow-[0_6px_25px_rgba(217,154,30,0.25)]
-            sm:w-auto
-          "
-        >
-          Start as a Freelancer
-        </Button>
-      </Link>
-
-      {/* Secondary */}
-      <Link to="/signup" className="w-full sm:w-auto">
-        <Button
-          size="lg"
-          variant="outline"
-          className="
-            w-full
-            border-[#55554d]
-            bg-white/2
-            text-surface-900
-            backdrop-blur-sm
-            transition-all duration-200
-            hover:border-[#77776d]
-            hover:bg-white/6
-            sm:w-auto
-          "
-        >
-          Hire Talent
-        </Button>
-      </Link>
-    </div>
-  </div>
-</section>
+            {/* Secondary Action for Clients */}
+            <Link to="/signup?role=CLIENT" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto border-surface-400 bg-surface-100 text-surface-900 hover:bg-surface-200 hover:border-primary-500/50 font-semibold shadow-xs transition-all duration-200"
+              >
+                Hire as a Client
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

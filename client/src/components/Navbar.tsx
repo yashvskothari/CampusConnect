@@ -1,14 +1,16 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, LogOut, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import Button from "./Button";
 import Avatar from "./Avatar";
+import ThemeSelector from "./ThemeSelector";
 import { getDashboardPath } from "../utils";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -24,6 +26,11 @@ export default function Navbar() {
     { to: "/about", label: "About Us" },
   ];
 
+  const isLinkActive = (to: string) => {
+    if (to === "/") return location.pathname === "/";
+    return location.pathname.startsWith(to);
+  };
+
   return (
     <nav className="sticky top-0 z-50 border-b border-surface-300 bg-surface-0/90 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -36,29 +43,33 @@ export default function Navbar() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <span className="flex items-baseline gap-1">
-              <span className="text-lg font-bold text-surface-900">
-                GigVerse
-              </span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider brand-gradient-text">
-                AI
-              </span>
+            <span className="text-lg font-bold text-surface-900">
+              GigVerse
             </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="text-sm font-medium text-surface-800 hover:text-white transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = isLinkActive(link.to);
+              return (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`relative py-1 text-sm font-medium transition-colors ${
+                    active ? "text-primary-400 font-semibold" : "text-surface-700 hover:text-surface-900"
+                  }`}
+                >
+                  {link.label}
+                  {active && (
+                    <span className="absolute -bottom-1.5 left-0 right-0 h-0.5 rounded-full brand-gradient shadow-[0_0_8px_rgba(16,185,129,0.7)]" />
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="hidden md:flex items-center gap-3">
+            <ThemeSelector />
             {user ? (
               <>
                 <Link
@@ -92,7 +103,7 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="text-sm font-medium text-surface-800 hover:text-white transition-colors px-2"
+                  className="text-sm font-medium text-surface-800 hover:text-surface-900 transition-colors px-2"
                 >
                   Login
                 </Link>
@@ -116,17 +127,28 @@ export default function Navbar() {
         </div>
 
         {mobileOpen && (
-          <div className="md:hidden border-t border-surface-300 py-4 space-y-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="block px-3 py-2 text-sm font-medium text-surface-800"
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="md:hidden border-t border-surface-300 py-4 space-y-2">
+            <div className="px-3 pb-2 flex items-center justify-between border-b border-surface-300 mb-2">
+              <span className="text-xs font-semibold text-surface-700 uppercase tracking-wider">Appearance</span>
+              <ThemeSelector />
+            </div>
+            {navLinks.map((link) => {
+              const active = isLinkActive(link.to);
+              return (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    active
+                      ? "bg-primary-500/15 text-primary-400 font-semibold"
+                      : "text-surface-800 hover:bg-surface-200 hover:text-surface-900"
+                  }`}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             {user ? (
               <>
                 <Link
@@ -181,7 +203,7 @@ export default function Navbar() {
           onClick={() => setShowLogoutConfirm(false)}
         >
           <div
-            className="w-full max-w-sm rounded-xl bg-surface-0 backdrop-blur-md p-6 shadow-xl mt-20 border border-white/20"
+            className="w-full max-w-sm rounded-xl bg-surface-100 backdrop-blur-md p-6 shadow-xl mt-20 border border-surface-300"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-lg font-semibold text-surface-900">Log out?</h3>

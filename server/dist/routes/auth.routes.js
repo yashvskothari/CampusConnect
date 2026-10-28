@@ -24,7 +24,10 @@ router.post('/signup', async (req, res) => {
             res.status(400).json({ error: 'Name, email, and password are required' });
             return;
         }
-        const existing = await prisma_1.default.user.findUnique({ where: { email } });
+        const cleanEmail = normalizeEmail(email);
+        const existing = await prisma_1.default.user.findFirst({
+            where: { email: { equals: cleanEmail, mode: 'insensitive' } },
+        });
         if (existing) {
             res.status(409).json({ error: 'Email already registered' });
             return;
@@ -34,8 +37,8 @@ router.post('/signup', async (req, res) => {
         const hashedPassword = await bcryptjs_1.default.hash(password, 10);
         const user = await prisma_1.default.user.create({
             data: {
-                name,
-                email,
+                name: typeof name === 'string' ? name.trim() : name,
+                email: cleanEmail,
                 password: hashedPassword,
                 role: userRole,
                 bio: bio || null,
@@ -53,12 +56,19 @@ router.post('/signup', async (req, res) => {
 });
 router.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        if (!email || !password) {
+        const rawEmail = typeof req.body?.email === 'string' ? req.body.email.trim() : '';
+        const password = typeof req.body?.password === 'string' ? req.body.password : '';
+        if (!rawEmail || !password) {
             res.status(400).json({ error: 'Email and password are required' });
             return;
         }
-        const user = await prisma_1.default.user.findUnique({ where: { email } });
+        // Direct unique match first (fastest index hit), followed by case-insensitive fallback
+        let user = await prisma_1.default.user.findUnique({ where: { email: rawEmail } });
+        if (!user) {
+            user = await prisma_1.default.user.findFirst({
+                where: { email: { equals: rawEmail, mode: 'insensitive' } },
+            });
+        }
         if (!user) {
             res.status(401).json({ error: 'Invalid credentials' });
             return;
@@ -74,7 +84,7 @@ router.post('/login', async (req, res) => {
     }
     catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ error: 'Login failed' });
+        res.status(500).json({ error: 'Login failed', details: error?.message });
     }
 });
 router.post('/forgot-password', async (req, res) => {

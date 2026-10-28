@@ -6,25 +6,30 @@ import Badge from '../../components/Badge';
 import Button from '../../components/Button';
 import EmptyState from '../../components/EmptyState';
 import { useAuth } from '../../context/AuthContext';
-import { serviceApi, bidApi, recommendationApi } from '../../services';
+import { serviceApi, bidApi, recommendationApi, paymentApi } from '../../services';
 import { formatCurrency } from '../../utils';
-import type { Service, Bid, Job } from '../../types';
+import type { Service, Bid, Job, Payment } from '../../types';
 
 export default function FreelancerDashboard() {
   const { user } = useAuth();
   const [services, setServices] = useState<Service[]>([]);
   const [bids, setBids] = useState<Bid[]>([]);
   const [recommendations, setRecommendations] = useState<Job[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
 
   useEffect(() => {
     if (!user) return;
     serviceApi.getAll().then(({ data }) => setServices(data.filter((s) => s.freelancerId === user.id))).catch(() => {});
     bidApi.getAll({ freelancerId: user.id }).then(({ data }) => setBids(data)).catch(() => {});
     recommendationApi.getJobMatches().then(({ data }) => setRecommendations(data.slice(0, 3))).catch(() => {});
+    paymentApi.getAll({ freelancerId: user.id }).then(({ data }) => setPayments(data)).catch(() => {});
   }, [user]);
 
-  const activeBids = bids.filter((b) => b.status === 'PENDING' || b.status === 'ACCEPTED');
   const acceptedJobs = bids.filter((b) => b.status === 'ACCEPTED');
+
+  const totalEarnings = payments
+    .filter((p) => p.status === 'COMPLETED')
+    .reduce((sum, p) => sum + (p.freelancerPayout || (p.amount - p.commission)), 0);
 
   return (
     <div className="space-y-8">
@@ -35,19 +40,33 @@ export default function FreelancerDashboard() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Services Listed', value: services.length, icon: Briefcase, color: 'bg-primary-500/15 text-primary-400' },
-          { label: 'Active Bids', value: activeBids.length, icon: IndianRupee, color: 'bg-teal-100 text-teal-700' },
-          { label: 'Active Jobs', value: acceptedJobs.length, icon: Briefcase, color: 'bg-green-100 text-green-600' },
-          { label: 'Rating', value: user?.rating.toFixed(1) ?? '0', icon: Sparkles, color: 'bg-amber-100 text-amber-600' },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <Card key={label}>
-            <div className="flex items-center gap-3">
-              <div className={`rounded-lg p-2 ${color}`}><Icon className="h-5 w-5" /></div>
-              <div>
-                <p className="text-2xl font-bold">{value}</p>
-                <p className="text-xs text-surface-700">{label}</p>
+          { label: 'Total Earnings', value: formatCurrency(totalEarnings), icon: IndianRupee, color: 'bg-primary-500/15 text-primary-400', to: '/dashboard/freelancer/earnings' },
+          { label: 'Services Listed', value: services.length, icon: Briefcase, color: 'bg-teal-500/15 text-teal-400', to: '/dashboard/freelancer/services' },
+          { label: 'Active Jobs', value: acceptedJobs.length, icon: Briefcase, color: 'bg-green-500/15 text-green-400', to: '/dashboard/freelancer/bids' },
+          { label: 'Rating', value: user?.rating.toFixed(1) ?? '0', icon: Sparkles, color: 'bg-amber-500/15 text-amber-400' },
+        ].map(({ label, value, icon: Icon, color, to }) => (
+          <Card key={label} className={to ? "hover:border-primary-500/30 transition-all cursor-pointer group" : ""}>
+            {to ? (
+              <Link to={to} className="block">
+                <div className="flex items-center gap-3">
+                  <div className={`rounded-lg p-2 ${color}`}><Icon className="h-5 w-5" /></div>
+                  <div>
+                    <p className="text-2xl font-bold">{value}</p>
+                    <p className="text-xs text-surface-700 group-hover:text-primary-400 transition-colors flex items-center gap-1">
+                      {label}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className={`rounded-lg p-2 ${color}`}><Icon className="h-5 w-5" /></div>
+                <div>
+                  <p className="text-2xl font-bold">{value}</p>
+                  <p className="text-xs text-surface-700">{label}</p>
+                </div>
               </div>
-            </div>
+            )}
           </Card>
         ))}
       </div>

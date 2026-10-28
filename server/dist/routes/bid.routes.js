@@ -7,7 +7,7 @@ const express_1 = require("express");
 const prisma_1 = __importDefault(require("../utils/prisma"));
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const params_1 = require("../utils/params");
-const COMMISSION_RATE = 0.15;
+const razorpay_1 = require("../utils/razorpay");
 const router = (0, express_1.Router)();
 router.get('/', auth_middleware_1.authenticate, async (req, res) => {
     try {
@@ -104,18 +104,24 @@ router.patch('/:id/accept', auth_middleware_1.authenticate, (0, auth_middleware_
             prisma_1.default.bid.updateMany({ where: { jobId: bid.jobId, id: { not: id } }, data: { status: 'REJECTED' } }),
             prisma_1.default.job.update({ where: { id: bid.jobId }, data: { status: 'IN_PROGRESS' } }),
         ]);
-        const commission = bid.quote * COMMISSION_RATE;
-        await prisma_1.default.payment.create({
+        const pricing = (0, razorpay_1.calculatePricing)(bid.quote);
+        const payment = await prisma_1.default.payment.create({
             data: {
                 amount: bid.quote,
-                commission,
+                platformFee: pricing.platformFee,
+                commission: pricing.platformFee,
+                tax: pricing.tax,
+                discount: 0,
+                totalAmount: pricing.totalAmount,
+                freelancerPayout: pricing.freelancerPayout,
+                currency: 'INR',
                 status: 'PENDING',
                 clientId: bid.job.clientId,
                 freelancerId: bid.freelancerId,
                 jobId: bid.jobId,
             },
         });
-        res.json(updatedBid);
+        res.json({ ...updatedBid, paymentId: payment.id });
     }
     catch (error) {
         console.error('Failed to accept bid:', error);

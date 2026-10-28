@@ -1,7 +1,9 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, User, IndianRupee, Star, Sparkles, Plus } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, User, IndianRupee, Star, Sparkles, Plus, Receipt } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../utils';
+import PageTransition from '../components/PageTransition';
+import ThemeSelector from '../components/ThemeSelector';
 
 interface SidebarLink {
   to: string;
@@ -30,9 +32,9 @@ export default function DashboardLayout({ links }: { links: SidebarLink[] }) {
                     key={link.to}
                     to={link.to}
                     className={cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200',
                       location.pathname === link.to
-                        ? 'bg-primary-500/10 text-primary-400'
+                        ? 'bg-primary-500/15 text-primary-400 shadow-[0_0_12px_rgba(16,185,129,0.15)] font-semibold'
                         : 'text-surface-800 hover:bg-surface-200 hover:text-surface-900'
                     )}
                   >
@@ -41,10 +43,19 @@ export default function DashboardLayout({ links }: { links: SidebarLink[] }) {
                   </Link>
                 ))}
               </nav>
+
+              <div className="mt-6 pt-4 border-t border-surface-300">
+                <div className="flex items-center justify-between px-1 mb-2">
+                  <span className="text-[11px] font-semibold text-surface-700 uppercase tracking-wider">Theme</span>
+                </div>
+                <ThemeSelector />
+              </div>
             </div>
           </aside>
           <div className="flex-1 min-w-0">
-            <Outlet />
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
           </div>
         </div>
       </div>
@@ -56,6 +67,7 @@ export const freelancerLinks: SidebarLink[] = [
   { to: '/dashboard/freelancer', label: 'Overview', icon: <LayoutDashboard className="h-4 w-4" /> },
   { to: '/dashboard/freelancer/services', label: 'My Services', icon: <Briefcase className="h-4 w-4" /> },
   { to: '/dashboard/freelancer/bids', label: 'My Bids', icon: <IndianRupee className="h-4 w-4" /> },
+  { to: '/dashboard/freelancer/earnings', label: 'Earnings & Orders', icon: <Receipt className="h-4 w-4" /> },
   { to: '/dashboard/freelancer/recommendations', label: 'AI Matches', icon: <Sparkles className="h-4 w-4" /> },
   { to: '/messages', label: 'Messages', icon: <MessageSquare className="h-4 w-4" /> },
   { to: '/profile', label: 'Profile', icon: <User className="h-4 w-4" /> },

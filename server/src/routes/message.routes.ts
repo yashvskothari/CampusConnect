@@ -26,7 +26,7 @@ const upload = multer({
   limits: { fileSize: MAX_ATTACHMENT_BYTES, files: 1, fields: 5 },
   fileFilter: (_req, file, cb) => {
     if (!isAllowedExtension(sanitizeDisplayName(file.originalname))) {
-      cb(new UploadRejected('This file type is not allowed. Only documents (PDF, DOCX, MD, …) and images (PNG, JPG, …) can be attached.'));
+      cb(new UploadRejected('This file type is not allowed. Only photos, audio, and documents (PDF, Word, MD, …) can be attached.'));
       return;
     }
     cb(null, true);

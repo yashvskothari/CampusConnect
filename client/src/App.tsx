@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import MainLayout from "./layouts/MainLayout";
 import DashboardLayout, {
   freelancerLinks,
@@ -21,24 +22,32 @@ import PostJobPage from "./pages/PostJobPage";
 import ProfilePage from "./pages/ProfilePage";
 import MessagesPage from "./pages/MessagesPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import CheckoutPage from "./pages/CheckoutPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 import FreelancerDashboard from "./pages/dashboard/FreelancerDashboard";
 import FreelancerServicesPage from "./pages/dashboard/FreelancerServicesPage";
 import FreelancerBidsPage from "./pages/dashboard/FreelancerBidsPage";
 import FreelancerRecommendationsPage from "./pages/dashboard/FreelancerRecommendationsPage";
+import FreelancerEarningsPage from "./pages/dashboard/FreelancerEarningsPage";
 import ClientDashboard from "./pages/dashboard/ClientDashboard";
 import ClientBidsPage from "./pages/dashboard/ClientBidsPage";
 import ClientPaymentsPage from "./pages/dashboard/ClientPaymentsPage";
 
+import PageProgressBar from "./components/PageProgressBar";
+import ScrollToTop from "./components/ScrollToTop";
+
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <PageProgressBar />
         <Routes>
-          <Route path="/about" element={<AboutUsPage />} />
           <Route element={<MainLayout />}>
             <Route index element={<LandingPage />} />
+            <Route path="about" element={<AboutUsPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="signup" element={<SignupPage />} />
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
@@ -52,6 +61,22 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <PaymentSuccessPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="checkout/:paymentId"
+              element={
+                <ProtectedRoute roles={["CLIENT", "ADMIN"]}>
+                  <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="checkout/service/:serviceId"
+              element={
+                <ProtectedRoute roles={["CLIENT", "ADMIN"]}>
+                  <CheckoutPage />
                 </ProtectedRoute>
               }
             />
@@ -95,6 +120,7 @@ export default function App() {
                 path="recommendations"
                 element={<FreelancerRecommendationsPage />}
               />
+              <Route path="earnings" element={<FreelancerEarningsPage />} />
             </Route>
 
             <Route
@@ -115,6 +141,7 @@ export default function App() {
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+    </ThemeProvider>
     </AuthProvider>
   );
 }

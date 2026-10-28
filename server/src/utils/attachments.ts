@@ -41,7 +41,7 @@ const isIsoBmff =
 
 interface AllowedType {
   mime: string;
-  kind: 'image' | 'document';
+  kind: 'image' | 'document' | 'audio';
   check: Check;
 }
 
@@ -64,6 +64,33 @@ export const ALLOWED_TYPES: Record<string, AllowedType> = {
   '.heic': { mime: 'image/heic', kind: 'image', check: isIsoBmff('heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1') },
   '.heif': { mime: 'image/heif', kind: 'image', check: isIsoBmff('heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1') },
   '.ico': { mime: 'image/x-icon', kind: 'image', check: startsWith([0x00, 0x00, 0x01, 0x00]) },
+
+  // ---- Audio ----
+  '.mp3': {
+    mime: 'audio/mpeg',
+    kind: 'audio',
+    check: (buf) => startsWith([0x49, 0x44, 0x33])(buf) || (buf.length >= 2 && buf[0] === 0xff && (buf[1] & 0xe0) === 0xe0),
+  },
+  '.wav': {
+    mime: 'audio/wav',
+    kind: 'audio',
+    check: (buf) => buf.length >= 12 && ascii(buf, 0, 4) === 'RIFF' && ascii(buf, 8, 12) === 'WAVE',
+  },
+  '.ogg': {
+    mime: 'audio/ogg',
+    kind: 'audio',
+    check: startsWith([0x4f, 0x67, 0x67, 0x53]),
+  },
+  '.m4a': {
+    mime: 'audio/mp4',
+    kind: 'audio',
+    check: isIsoBmff('M4A ', 'M4B ', 'mp42', 'isom'),
+  },
+  '.aac': {
+    mime: 'audio/aac',
+    kind: 'audio',
+    check: (buf) => startsWith([0x49, 0x44, 0x33])(buf) || (buf.length >= 2 && buf[0] === 0xff && (buf[1] & 0xf0) === 0xf0),
+  },
 
   // ---- Documents ----
   '.pdf': { mime: 'application/pdf', kind: 'document', check: (buf) => buf.subarray(0, 1024).includes('%PDF-') },
@@ -114,7 +141,7 @@ export function validateAttachment(
   if (!rule) {
     return {
       ok: false,
-      error: 'This file type is not allowed. Only documents (PDF, DOCX, MD, …) and images (PNG, JPG, …) can be attached.',
+      error: 'This file type is not allowed. Only photos, audio, and documents (PDF, Word, MD, …) can be attached.',
     };
   }
   if (buffer.length === 0) return { ok: false, error: 'The file is empty.' };

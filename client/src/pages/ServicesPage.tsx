@@ -1,7 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { Search, SlidersHorizontal, RotateCcw } from 'lucide-react';
 
 import Card from '../components/Card';
+import Button from '../components/Button';
 import Rating from '../components/Rating';
 import EmptyState from '../components/EmptyState';
 import { SkeletonCard } from '../components/Skeleton';
@@ -395,6 +397,21 @@ export default function ServicesPage() {
                       />
                     </div>
                   )}
+                </div>
+
+                {/* Checkout CTA */}
+                <div className="mt-4 pt-3 border-t border-white/6 flex items-center justify-between">
+                  <Link
+                    to={`/users/${service.freelancerId}`}
+                    className="text-xs text-surface-600 hover:text-primary-400 transition-colors"
+                  >
+                    View Freelancer
+                  </Link>
+                  <Link to={`/checkout/service/${service.id}`}>
+                    <Button size="sm">
+                      Book Service
+                    </Button>
+                  </Link>
                 </div>
               </Card>
             ))}

@@ -2,8 +2,7 @@ import { Router, Request, Response } from 'express';
 import prisma from '../utils/prisma';
 import { authenticate, authorize } from '../middleware/auth.middleware';
 import { getParam } from '../utils/params';
-
-const COMMISSION_RATE = 0.15;
+import { calculatePricing } from '../utils/razorpay';
 
 const router = Router();
 
@@ -111,11 +110,17 @@ router.patch('/:id/accept', authenticate, authorize('CLIENT', 'ADMIN'), async (r
       prisma.job.update({ where: { id: bid.jobId }, data: { status: 'IN_PROGRESS' } }),
     ]);
 
-    const commission = bid.quote * COMMISSION_RATE;
-    await prisma.payment.create({
+    const pricing = calculatePricing(bid.quote);
+    const payment = await prisma.payment.create({
       data: {
         amount: bid.quote,
-        commission,
+        platformFee: pricing.platformFee,
+        commission: pricing.platformFee,
+        tax: pricing.tax,
+        discount: 0,
+        totalAmount: pricing.totalAmount,
+        freelancerPayout: pricing.freelancerPayout,
+        currency: 'INR',
         status: 'PENDING',
         clientId: bid.job.clientId,
         freelancerId: bid.freelancerId,
@@ -123,7 +128,7 @@ router.patch('/:id/accept', authenticate, authorize('CLIENT', 'ADMIN'), async (r
       },
     });
 
-    res.json(updatedBid);
+    res.json({ ...updatedBid, paymentId: payment.id });
   } catch (error) {
     console.error('Failed to accept bid:', error);
     res.status(500).json({ error: 'Failed to accept bid' });

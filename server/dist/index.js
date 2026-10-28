@@ -3,6 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.httpServer = exports.isAllowedOrigin = void 0;
+/// <reference path="./types/express.d.ts" />
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -26,11 +28,43 @@ const PORT = process.env.PORT || 5000;
 // IP-based rate limiting useless. Trusting one hop is safe for a single
 // reverse proxy in front of the app.
 app.set('trust proxy', 1);
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+    'http://127.0.0.1:5175',
+].filter(Boolean);
+const isAllowedOrigin = (origin) => {
+    if (!origin)
+        return true;
+    if (allowedOrigins.includes(origin))
+        return true;
+    if (/^https?:\/\/localhost(:\d+)?$/.test(origin))
+        return true;
+    if (/^https?:\/\/127\.0\.0\.1(:\d+)?$/.test(origin))
+        return true;
+    return false;
+};
+exports.isAllowedOrigin = isAllowedOrigin;
 app.use((0, cors_1.default)({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+        if ((0, exports.isAllowedOrigin)(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(null, false);
+        }
+    },
     credentials: true,
 }));
-app.use(express_1.default.json());
+app.use(express_1.default.json({
+    verify: (req, _res, buf) => {
+        req.rawBody = buf;
+    },
+}));
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));
 app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', service: 'Gigverse API', timestamp: new Date().toISOString() });
@@ -48,8 +82,11 @@ app.use((_req, res) => {
     res.status(404).json({ error: 'Route not found' });
 });
 const httpServer = http_1.default.createServer(app);
+exports.httpServer = httpServer;
 (0, socket_1.setupSocket)(httpServer); // Real-time chat & presence engine
-httpServer.listen(PORT, () => {
-    console.log(`Gigverse server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+    httpServer.listen(PORT, () => {
+        console.log(`Gigverse server running on port ${PORT}`);
+    });
+}
 exports.default = app;

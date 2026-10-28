@@ -45,6 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch {
           sessionStorage.removeItem('token');
           sessionStorage.removeItem('user');
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
           setToken(null);
           setUser(null);
         }
@@ -52,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     };
     init();
-  }, [token]);
+  }, []);
 
   const login = async (email: string, password: string) => {
     const { data } = await authApi.login({ email, password });

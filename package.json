@@ -11,6 +11,7 @@
     "build:server": "cd server && npm run build",
     "build:client": "cd client && npm run build",
     "install:all": "cd server && npm install && cd ../client && npm install --legacy-peer-deps",
+    "test": "cd server && npm test",
     "db:migrate": "cd server && npx prisma migrate dev",
     "db:generate": "cd server && npx prisma generate",
     "db:seed": "cd server && npx prisma db seed",

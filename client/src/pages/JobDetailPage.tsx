@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Sparkles, Clock, MessageSquare } from 'lucide-react';
@@ -17,6 +17,7 @@ import type { Job, BidSuggestion } from '../types';
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [job, setJob] = useState<Job | null>(null);
   const [suggestion, setSuggestion] = useState<BidSuggestion | null>(null);
@@ -198,15 +199,20 @@ export default function JobDetailPage() {
                         <>
                           <Button size="sm" onClick={async () => {
                             try {
-                              await bidApi.accept(bid.id);
-                              toast.success('Bid accepted! Payment initiated.');
-                              const { data } = await jobApi.getById(id!);
-                              setJob(data);
+                              const res = await bidApi.accept(bid.id);
+                              toast.success('Bid accepted! Redirecting to checkout...');
+                              const newPaymentId = (res.data as any)?.paymentId;
+                              if (newPaymentId) {
+                                navigate(`/checkout/${newPaymentId}`);
+                              } else {
+                                const { data } = await jobApi.getById(id!);
+                                setJob(data);
+                              }
                             } catch (err: unknown) {
                               const error = err as { response?: { data?: { error?: string } } };
                               toast.error(error.response?.data?.error || 'Failed to accept bid');
                             }
-                          }}>Accept</Button>
+                          }}>Accept & Pay</Button>
                           <Button size="sm" variant="outline" onClick={async () => {
                             try {
                               await bidApi.reject(bid.id);

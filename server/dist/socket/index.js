@@ -3,19 +3,51 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.publishMessage = publishMessage;
 exports.setupSocket = setupSocket;
 const socket_io_1 = require("socket.io");
 const jwt_1 = require("../utils/jwt");
 const prisma_1 = __importDefault(require("../utils/prisma"));
+const messageActions_1 = require("../utils/messageActions");
 const onlineUsers = new Map();
+let ioInstance = null;
+/**
+ * Broadcasts a freshly created message to everyone in the conversation.
+ * Shared by the socket "send_message" handler and the REST attachment upload.
+ */
+async function publishMessage(message) {
+    if (!ioInstance)
+        return;
+    const { conversationId } = message;
+    // Broadcast to focused room
+    ioInstance.to(`conversation:${conversationId}`).emit('new_message', message);
+    // Notify participants in their personal rooms (for unread count/toasts)
+    const participants = await prisma_1.default.conversationParticipant.findMany({
+        where: { conversationId },
+        select: { userId: true },
+    });
+    for (const p of participants) {
+        ioInstance.to(`user:${p.userId}`).emit('notification_message', { message, conversationId });
+    }
+}
 function setupSocket(httpServer) {
     const io = new socket_io_1.Server(httpServer, {
         cors: {
-            origin: process.env.CLIENT_URL || 'http://localhost:5173',
+            origin: (origin, callback) => {
+                if (!origin)
+                    return callback(null, true);
+                if (origin === process.env.CLIENT_URL ||
+                    /^https?:\/\/localhost(:\d+)?$/.test(origin) ||
+                    /^https?:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)) {
+                    return callback(null, true);
+                }
+                return callback(null, false);
+            },
             methods: ['GET', 'POST'],
             credentials: true,
         },
     });
+    ioInstance = io;
     io.use((socket, next) => {
         const token = socket.handshake.auth?.token;
         if (!token) {
@@ -57,6 +89,11 @@ function setupSocket(httpServer) {
         });
         socket.on('leave_conversation', (conversationId) => {
             socket.leave(`conversation:${conversationId}`);
+            socket.to(`conversation:${conversationId}`).emit('typing', {
+                conversationId,
+                userId,
+                isTyping: false,
+            });
         });
         socket.on('typing', ({ conversationId, isTyping }) => {
             socket.to(`conversation:${conversationId}`).emit('typing', {
@@ -65,9 +102,12 @@ function setupSocket(httpServer) {
                 isTyping,
             });
         });
-        socket.on('send_message', async ({ conversationId, text, fileUrl }) => {
+        // Text only. Files must go through the validated REST upload
+        // (POST /api/messages/conversations/:id/attachments) so type, size and
+        // ownership are always checked — clients can never inject a file reference.
+        socket.on('send_message', async ({ conversationId, text }) => {
             try {
-                if (!text?.trim() && !fileUrl)
+                if (!text?.trim())
                     return;
                 const participant = await prisma_1.default.conversationParticipant.findFirst({
                     where: { conversationId, userId },
@@ -76,8 +116,7 @@ function setupSocket(httpServer) {
                     return;
                 const message = await prisma_1.default.message.create({
                     data: {
-                        text: text ? text.trim() : '',
-                        fileUrl: fileUrl || null,
+                        text: text.trim().slice(0, messageActions_1.MAX_MESSAGE_LENGTH),
                         senderId: userId,
                         conversationId,
                     },
@@ -87,22 +126,53 @@ function setupSocket(httpServer) {
                     where: { id: conversationId },
                     data: { updatedAt: new Date() },
                 });
-                // Broadcast to focused room
-                io.to(`conversation:${conversationId}`).emit('new_message', message);
-                // Notify participants in their personal rooms (for unread count/toasts)
-                const participants = await prisma_1.default.conversationParticipant.findMany({
-                    where: { conversationId },
-                    select: { userId: true },
+                await publishMessage(message);
+                // When a message is sent, clear typing indicator for the sender in this conversation
+                socket.to(`conversation:${conversationId}`).emit('typing', {
+                    conversationId,
+                    userId,
+                    isTyping: false,
                 });
-                for (const p of participants) {
-                    io.to(`user:${p.userId}`).emit('notification_message', {
-                        message,
-                        conversationId,
-                    });
-                }
             }
             catch (error) {
                 console.error('Socket message error:', error);
+            }
+        });
+        const broadcastUpdate = async (conversationId, message) => {
+            const participants = await prisma_1.default.conversationParticipant.findMany({
+                where: { conversationId },
+                select: { userId: true },
+            });
+            // Chained .to() delivers once per socket even if it is in several of these rooms
+            let target = io.to(`conversation:${conversationId}`);
+            for (const p of participants)
+                target = target.to(`user:${p.userId}`);
+            target.emit('message_updated', message);
+        };
+        socket.on('edit_message', async ({ messageId, text }, ack) => {
+            try {
+                const result = await (0, messageActions_1.editMessage)(userId, messageId, text);
+                if (!result.ok)
+                    return ack?.({ ok: false, error: result.error });
+                await broadcastUpdate(result.message.conversationId, result.message);
+                ack?.({ ok: true });
+            }
+            catch (error) {
+                console.error('Socket edit error:', error);
+                ack?.({ ok: false, error: 'Failed to edit message' });
+            }
+        });
+        socket.on('delete_message', async ({ messageId }, ack) => {
+            try {
+                const result = await (0, messageActions_1.unsendMessage)(userId, messageId);
+                if (!result.ok)
+                    return ack?.({ ok: false, error: result.error });
+                await broadcastUpdate(result.message.conversationId, result.message);
+                ack?.({ ok: true });
+            }
+            catch (error) {
+                console.error('Socket delete error:', error);
+                ack?.({ ok: false, error: 'Failed to unsend message' });
             }
         });
         socket.on('disconnect', () => {

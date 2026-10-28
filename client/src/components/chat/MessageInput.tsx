@@ -1,8 +1,32 @@
 import { useState, useRef, useEffect, type KeyboardEvent, type ChangeEvent } from 'react';
-import { Send, Smile, Check, X, Pencil, Paperclip, FileText } from 'lucide-react';
+import {
+  Send,
+  Smile,
+  Check,
+  X,
+  Pencil,
+  Paperclip,
+  FileText,
+  Image as ImageIcon,
+  Headphones,
+  FileDown,
+  FileCode,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import EmojiPicker from './EmojiPicker';
-import { ACCEPT_ATTR, formatFileSize, validateFile } from '../../utils/attachments';
+import AttachmentMenu from './AttachmentMenu';
+import {
+  ACCEPT_ATTR,
+  ATTACHMENT_CATEGORIES,
+  type AttachmentCategoryKey,
+  formatFileSize,
+  validateFile,
+  isImageType,
+  isAudioType,
+  isPdfType,
+  isWordType,
+  isMdType,
+} from '../../utils/attachments';
 import type { Message } from '../../types';
 
 interface MessageInputProps {
@@ -17,6 +41,49 @@ interface MessageInputProps {
   onCancelEdit?: () => void;
 }
 
+function getFilePreviewBadge(file: File) {
+  if (isImageType(file.type, file.name)) {
+    return {
+      Icon: ImageIcon,
+      label: 'Photo',
+      colorClass: 'text-blue-400 bg-blue-500/15',
+    };
+  }
+  if (isAudioType(file.type, file.name)) {
+    return {
+      Icon: Headphones,
+      label: 'Audio',
+      colorClass: 'text-amber-400 bg-amber-500/15',
+    };
+  }
+  if (isWordType(file.type, file.name)) {
+    return {
+      Icon: FileText,
+      label: 'Word',
+      colorClass: 'text-sky-400 bg-sky-500/15',
+    };
+  }
+  if (isPdfType(file.type, file.name)) {
+    return {
+      Icon: FileDown,
+      label: 'PDF',
+      colorClass: 'text-rose-400 bg-rose-500/15',
+    };
+  }
+  if (isMdType(file.type, file.name)) {
+    return {
+      Icon: FileCode,
+      label: 'Markdown',
+      colorClass: 'text-emerald-400 bg-emerald-500/15',
+    };
+  }
+  return {
+    Icon: FileText,
+    label: 'Document',
+    colorClass: 'text-primary-400 bg-primary-500/15',
+  };
+}
+
 export default function MessageInput({
   onSendMessage,
   onSendAttachment,
@@ -28,6 +95,9 @@ export default function MessageInput({
 }: MessageInputProps) {
   const [text, setText] = useState('');
   const [showEmoji, setShowEmoji] = useState(false);
+  const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<AttachmentCategoryKey | null>(null);
+  const [acceptFilter, setAcceptFilter] = useState<string>(ACCEPT_ATTR);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -87,17 +157,39 @@ export default function MessageInput({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingMessage?.id]);
 
+  const handleCategorySelect = (category: AttachmentCategoryKey) => {
+    setActiveCategory(category);
+    const cat = ATTACHMENT_CATEGORIES.find((c) => c.key === category);
+    const filter = cat ? cat.accept : ACCEPT_ATTR;
+    setAcceptFilter(filter);
+    setShowAttachmentMenu(false);
+
+    // Directly update file input accept and trigger native picker
+    if (fileInputRef.current) {
+      fileInputRef.current.accept = filter;
+      fileInputRef.current.value = '';
+      fileInputRef.current.click();
+    }
+  };
+
   const handleFileChosen = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = ''; // allow choosing the same file again later
     if (!file) return;
-    const problem = validateFile(file);
+    const problem = validateFile(file, activeCategory || undefined);
     if (problem) {
       toast.error(problem);
       return;
     }
     setPendingFile(file);
     requestAnimationFrame(() => inputRef.current?.focus());
+  };
+
+  const handleRemovePendingFile = () => {
+    setPendingFile(null);
+    setActiveCategory(null);
+    setAcceptFilter(ACCEPT_ATTR);
+    if (fileInputRef.current) fileInputRef.current.accept = ACCEPT_ATTR;
   };
 
   const canSend = (Boolean(text.trim()) || Boolean(pendingFile)) && !disabled && !uploading;
@@ -113,7 +205,7 @@ export default function MessageInput({
       setProgress(0);
       try {
         await onSendAttachment(pendingFile, value, setProgress);
-        setPendingFile(null);
+        handleRemovePendingFile();
         setText('');
         setShowEmoji(false);
       } catch {
@@ -165,6 +257,13 @@ export default function MessageInput({
     <div className="relative border-t border-surface-300 bg-surface-100">
       {showEmoji && <EmojiPicker onSelect={insertEmoji} onClose={() => setShowEmoji(false)} />}
 
+      {showAttachmentMenu && (
+        <AttachmentMenu
+          onSelectCategory={handleCategorySelect}
+          onClose={() => setShowAttachmentMenu(false)}
+        />
+      )}
+
       {isEditing && (
         <div className="flex items-center gap-2 border-b border-surface-300 bg-surface-200/60 px-3 py-1.5 text-xs text-surface-800">
           <Pencil className="h-3.5 w-3.5 text-primary-400" />
@@ -182,48 +281,70 @@ export default function MessageInput({
         </div>
       )}
 
-      {pendingFile && !isEditing && (
-        <div className="border-b border-surface-300 bg-surface-200/60 px-3 py-2">
-          <div className="flex items-center gap-2 text-xs text-surface-800">
-            <FileText className="h-4 w-4 shrink-0 text-primary-400" />
-            <span className="min-w-0 flex-1 truncate" title={pendingFile.name}>
-              {pendingFile.name}
-            </span>
-            <span className="shrink-0 text-surface-600">{formatFileSize(pendingFile.size)}</span>
-            <button
-              type="button"
-              onClick={() => setPendingFile(null)}
-              disabled={uploading}
-              aria-label="Remove attachment"
-              className="rounded p-0.5 text-surface-700 hover:bg-surface-300 hover:text-surface-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
-          {uploading && (
-            <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-surface-300">
-              <div className="h-full brand-gradient transition-all" style={{ width: `${progress}%` }} />
+      {pendingFile && !isEditing && (() => {
+        const badge = getFilePreviewBadge(pendingFile);
+        const BadgeIcon = badge.Icon;
+        return (
+          <div className="border-b border-surface-300 bg-surface-200/60 px-3 py-2">
+            <div className="flex items-center gap-2.5 text-xs text-surface-800">
+              <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${badge.colorClass}`}>
+                <BadgeIcon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="truncate font-medium text-surface-900" title={pendingFile.name}>
+                    {pendingFile.name}
+                  </span>
+                  <span className="rounded bg-surface-300/80 px-1.5 py-0.5 text-[10px] text-surface-700 font-mono font-semibold uppercase">
+                    {badge.label}
+                  </span>
+                </div>
+                <p className="text-[10px] text-surface-600">{formatFileSize(pendingFile.size)}</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleRemovePendingFile}
+                disabled={uploading}
+                aria-label="Remove attachment"
+                className="rounded p-1 text-surface-700 hover:bg-surface-300 hover:text-surface-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
             </div>
-          )}
-        </div>
-      )}
+            {uploading && (
+              <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-surface-300">
+                <div className="h-full brand-gradient transition-all" style={{ width: `${progress}%` }} />
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       <div className="flex items-center gap-2 p-3">
         <input
           ref={fileInputRef}
           type="file"
-          accept={ACCEPT_ATTR}
+          accept={acceptFilter}
           className="hidden"
           onChange={handleFileChosen}
         />
         {onSendAttachment && (
           <button
             type="button"
+            data-attachment-toggle
             disabled={disabled || isEditing || uploading}
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+              setShowAttachmentMenu((v) => !v);
+              setShowEmoji(false);
+            }}
             aria-label="Attach a file"
-            title="Attach a document or image"
-            className="rounded-lg p-2 text-surface-700 transition-colors hover:bg-surface-200 hover:text-surface-900 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+            aria-expanded={showAttachmentMenu}
+            title="Attach photos, audio, Word, PDF, or MD files"
+            className={`rounded-lg p-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 ${
+              showAttachmentMenu
+                ? 'bg-surface-300 text-primary-400'
+                : 'text-surface-700 hover:bg-surface-200 hover:text-surface-900'
+            }`}
           >
             <Paperclip className="h-5 w-5" />
           </button>
@@ -232,7 +353,10 @@ export default function MessageInput({
           type="button"
           data-emoji-toggle
           disabled={disabled}
-          onClick={() => setShowEmoji((v) => !v)}
+          onClick={() => {
+            setShowEmoji((v) => !v);
+            setShowAttachmentMenu(false);
+          }}
           aria-label="Add emoji"
           aria-expanded={showEmoji}
           className={`rounded-lg p-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 ${

@@ -9,6 +9,9 @@ import type {
   Conversation,
   Message,
   BidSuggestion,
+  CheckoutConfig,
+  CheckoutOrderResponse,
+  PricingBreakdown,
 } from '../types';
 
 export const authApi = {
@@ -133,8 +136,59 @@ export const reviewApi = {
 };
 
 export const paymentApi = {
+  getConfig: () =>
+    api.get<CheckoutConfig>('/payments/config'),
+
   getAll: (params?: Record<string, string>) =>
     api.get<Payment[]>('/payments', { params }),
+
+  getById: (id: string) =>
+    api.get<Payment>(`/payments/${id}`),
+
+  createOrder: (data: {
+    paymentId?: string;
+    serviceId?: string;
+    couponCode?: string;
+    orderNotes?: string;
+  }) => api.post<CheckoutOrderResponse>('/payments/create-order', data),
+
+  verifyPayment: (data: {
+    paymentId: string;
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+    paymentMethod?: string;
+  }) =>
+    api.post<{ success: boolean; message: string; payment: Payment }>(
+      '/payments/verify',
+      data
+    ),
+
+  simulateSuccess: (data: { paymentId: string; paymentMethod?: string }) =>
+    api.post<{ success: boolean; simulated: boolean; payment: Payment }>(
+      '/payments/simulate-success',
+      data
+    ),
+
+  simulateFailure: (id: string, reason?: string) =>
+    api.post<{ success: boolean; payment: Payment }>(`/payments/${id}/fail`, {
+      reason,
+    }),
+
+  applyCoupon: (data: { code: string; subtotal: number }) =>
+    api.post<{
+      valid: boolean;
+      couponCode: string;
+      discount: number;
+      breakdown: PricingBreakdown;
+      message: string;
+    }>('/payments/apply-coupon', data),
+
+  cancelPayment: (id: string) =>
+    api.post<{ success: boolean; payment: Payment }>(`/payments/${id}/cancel`),
+
+  retryPayment: (id: string) =>
+    api.post<{ success: boolean; payment: Payment }>(`/payments/${id}/retry`),
 
   mockCheckout: (paymentId: string) =>
     api.post('/payments/mock-checkout', { paymentId }),

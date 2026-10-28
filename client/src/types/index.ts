@@ -74,14 +74,70 @@ export interface Review {
 export interface Payment {
   id: string;
   amount: number;
+  platformFee?: number;
   commission: number;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED';
+  tax?: number;
+  discount?: number;
+  totalAmount?: number;
+  freelancerPayout?: number;
+  currency?: string;
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'REFUNDED';
+  paymentMethod?: string | null;
+  provider?: string;
+  providerOrderId?: string | null;
+  providerPaymentId?: string | null;
+  providerSignature?: string | null;
+  failureReason?: string | null;
+  refundStatus?: string | null;
+  refundAmount?: number | null;
+  refundId?: string | null;
+  paidAt?: string | null;
+  orderNotes?: string | null;
+  couponCode?: string | null;
   clientId: string;
   freelancerId: string;
-  jobId?: string;
-  client?: Pick<User, 'id' | 'name'>;
-  freelancer?: Pick<User, 'id' | 'name'>;
+  jobId?: string | null;
+  serviceId?: string | null;
+  client?: Pick<User, 'id' | 'name' | 'email' | 'avatar'>;
+  freelancer?: Pick<User, 'id' | 'name' | 'email' | 'avatar' | 'rating'>;
+  job?: Pick<Job, 'id' | 'title' | 'category' | 'budget' | 'status'>;
+  service?: Pick<Service, 'id' | 'title' | 'category' | 'price'>;
   createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CheckoutConfig {
+  configured: boolean;
+  keyId: string;
+  currency: string;
+  isTestMode: boolean;
+  platformFeeRate: number;
+  gstRate: number;
+  coupons: { code: string; description: string }[];
+}
+
+export interface PricingBreakdown {
+  subtotal: number;
+  platformFee: number;
+  tax: number;
+  discount: number;
+  totalAmount: number;
+  freelancerPayout: number;
+  couponApplied?: string | null;
+}
+
+export interface CheckoutOrderResponse {
+  orderId: string;
+  paymentId: string;
+  amount: number;
+  amountInPaise: number;
+  currency: string;
+  keyId: string;
+  isTestMode: boolean;
+  breakdown: PricingBreakdown;
+  customer: { name: string; email: string };
+  freelancer: { id: string; name: string };
+  itemTitle: string;
 }
 
 export interface Message {

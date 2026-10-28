@@ -6,6 +6,7 @@ import Card from '../components/Card';
 import Avatar from '../components/Avatar';
 import Rating from '../components/Rating';
 import Button from '../components/Button';
+import ThemeSelector from '../components/ThemeSelector';
 import { userApi, reviewApi } from '../services';
 import { useAuth } from '../context/AuthContext';
 import type { User, Review } from '../types';
@@ -664,6 +665,25 @@ export default function ProfilePage() {
               Submit Review
             </Button>
           </form>
+        </Card>
+      )}
+
+
+      {/* =====================================================
+          APPEARANCE & THEME
+      ====================================================== */}
+
+      {isOwnProfile && (
+        <Card className="mt-8">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-surface-900">
+              Appearance & Theme
+            </h2>
+            <p className="mt-1 text-sm text-surface-700">
+              Personalize your Gigverse interface. Choose between Dark, Light, and warm Cream themes.
+            </p>
+          </div>
+          <ThemeSelector variant="expanded" />
         </Card>
       )}
 

@@ -11,7 +11,7 @@ import Card from "../components/Card";
 import { getDashboardPath } from "../utils";
 
 const schema = z.object({
-  email: z.string().email("Invalid email"),
+  email: z.string().trim().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -84,13 +84,21 @@ export default function LoginPage() {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      await login(data.email, data.password);
+      await login(data.email.trim(), data.password);
       toast.success("Welcome back!");
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const stored = sessionStorage.getItem("user") || localStorage.getItem("user");
+      const user = stored ? JSON.parse(stored) : {};
       navigate(from || getDashboardPath(user.role));
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { error?: string } } };
-      toast.error(error.response?.data?.error || "Login failed");
+      const error = err as { response?: { data?: { error?: string } }; message?: string };
+      const serverMessage = error.response?.data?.error;
+      if (serverMessage) {
+        toast.error(serverMessage);
+      } else if (error.message === 'Network Error' || !error.response) {
+        toast.error('Unable to connect to server. Please check your network.');
+      } else {
+        toast.error('Login failed. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }

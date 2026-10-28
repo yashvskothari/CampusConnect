@@ -30,7 +30,10 @@ router.post('/signup', async (req: Request, res: Response) => {
       return;
     }
 
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const cleanEmail = normalizeEmail(email);
+    const existing = await prisma.user.findFirst({
+      where: { email: { equals: cleanEmail, mode: 'insensitive' } },
+    });
     if (existing) {
       res.status(409).json({ error: 'Email already registered' });
       return;
@@ -42,8 +45,8 @@ router.post('/signup', async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: typeof name === 'string' ? name.trim() : name,
+        email: cleanEmail,
         password: hashedPassword,
         role: userRole,
         bio: bio || null,
@@ -62,13 +65,21 @@ router.post('/signup', async (req: Request, res: Response) => {
 
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
+    const rawEmail = typeof req.body?.email === 'string' ? req.body.email.trim() : '';
+    const password = typeof req.body?.password === 'string' ? req.body.password : '';
+    if (!rawEmail || !password) {
       res.status(400).json({ error: 'Email and password are required' });
       return;
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    // Direct unique match first (fastest index hit), followed by case-insensitive fallback
+    let user = await prisma.user.findUnique({ where: { email: rawEmail } });
+    if (!user) {
+      user = await prisma.user.findFirst({
+        where: { email: { equals: rawEmail, mode: 'insensitive' } },
+      });
+    }
+
     if (!user) {
       res.status(401).json({ error: 'Invalid credentials' });
       return;
@@ -83,9 +94,9 @@ router.post('/login', async (req: Request, res: Response) => {
     const token = signToken({ userId: user.id, email: user.email, role: user.role });
     const { password: _, ...userWithoutPassword } = user;
     res.json({ user: userWithoutPassword, token });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Login failed' });
+    res.status(500).json({ error: 'Login failed', details: error?.message });
   }
 });
 

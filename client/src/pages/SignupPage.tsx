@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -62,8 +62,11 @@ function EyeOffIcon() {
 export default function SignupPage() {
   const { signup } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const initialRole = searchParams.get("role")?.toUpperCase() === "CLIENT" ? "CLIENT" : "FREELANCER";
 
   const {
     register,
@@ -72,7 +75,7 @@ export default function SignupPage() {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { role: "FREELANCER" },
+    defaultValues: { role: initialRole },
   });
 
   const role = watch("role");

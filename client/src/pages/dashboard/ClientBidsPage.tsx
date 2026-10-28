@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Check, Clock3, UserRound, MessageSquare } from 'lucide-react';
 
@@ -20,6 +20,7 @@ import type { Bid } from '../../types';
 
 export default function ClientBidsPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [bids, setBids] = useState<Bid[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,17 +58,21 @@ export default function ClientBidsPage() {
     try {
       setAcceptingBid(bidId);
 
-      await bidApi.accept(bidId);
+      const res = await bidApi.accept(bidId);
+      toast.success('Bid accepted! Redirecting to checkout...');
 
-      toast.success('Bid accepted! Payment initiated.');
-
-      setBids((prev) =>
-        prev.map((bid) =>
-          bid.id === bidId
-            ? { ...bid, status: 'ACCEPTED' }
-            : bid
-        )
-      );
+      const newPaymentId = (res.data as any)?.paymentId;
+      if (newPaymentId) {
+        navigate(`/checkout/${newPaymentId}`);
+      } else {
+        setBids((prev) =>
+          prev.map((bid) =>
+            bid.id === bidId
+              ? { ...bid, status: 'ACCEPTED' }
+              : bid
+          )
+        );
+      }
     } catch (err: unknown) {
       const error = err as {
         response?: {
